@@ -37,25 +37,27 @@
                             </ul>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="#">Sale</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                        <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
                     </ul>
 
                     <ul class="navbar-nav ms-auto">
-                        <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">🔍</button>
+                        <li class="nav-item">
+                            <button class="btn nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">🔍</button>
+                        </li>
                         <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Register</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Sign In</a></li>
                     </ul>
-                    <div class="collapse" id="searchSection">
-                        <div class="container py-3">
-                            <form class="d-flex">
-                                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                                <button class="btn btn-outline-dark" type="submit">Search</button>
-                            </form>
-                        </div>
-                    </div>
                 </div>
             </div>
         </nav>
+        <div class="collapse bg-light border-top" id="searchSection">
+            <div class="container py-3">
+                <form class="d-flex justify-content-center">
+                    <input class="form-control me-2 w-50" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-dark" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
     </header>
