@@ -43,7 +43,7 @@
                         <button class="btn nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">🔍</button>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Register</a></li>
+                    <li class="nav-item"><a class="nav-link" href="register.php">Register</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Sign In</a></li>
                 </ul>
             </div>
