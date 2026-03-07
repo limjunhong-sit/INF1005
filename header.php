@@ -44,7 +44,7 @@
                     </li>
                     <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
                     <li class="nav-item"><a class="nav-link" href="register.php">Register</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Sign In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="signin.php">Sign In</a></li>
                 </ul>
             </div>
         </div>
