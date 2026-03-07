@@ -28,6 +28,7 @@
             </section>
 
             <section class="section">
+                <h2 class="visually-hidden">Brand Story</h2>
                 <span class="section-tag">Brand Story</span>
                 <div class="story-grid fade-in-el">
                     <div class="story-heading">
@@ -48,6 +49,7 @@
 
 
             <section class="mv-section">
+                <h2 class="visually-hidden">What Drives Us</h2>
                 <span class="section-tag">What Drives Us</span>
                 <div class="mv-grid">
                     <div class="mv-card fade-in-el">

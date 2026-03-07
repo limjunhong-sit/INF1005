@@ -9,7 +9,8 @@
                 <h2 style="font-family: 'Italiana', serif; font-size: 2rem;">Welcome to UniClothes</h2>
             </div>
 
-            <section id="home" style='margin: 0;'>        
+            <section id="home" style='margin: 0;'>     
+                <h2 class="visually-hidden">Home</h2>   
                 <img src="image/3_models.png" alt="UniClothes models" class="fade-in" style="width: 100%; display: block;">
             </section>
 
@@ -33,7 +34,6 @@
         <?php include 'footer.php'; ?>
 
          <script>
-        // Fade in on scroll
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
