@@ -15,22 +15,22 @@
                         <a class="nav-link dropdown-toggle" href="#" id="menDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Men</a>
                         <ul class="dropdown-menu" aria-labelledby="menDropdown">
                             <li><a class="dropdown-item" href="MenTshirt.php">T-Shirts</a></li>
-                            <li><a class="dropdown-item" href="#">Shirts</a></li>
-                            <li><a class="dropdown-item" href="#">Hoodies</a></li>
+                            <li><a class="dropdown-item" href="MenHoodies.php">Hoodies</a></li>
+                            <!--<li><a class="dropdown-item" href="#">Shirts</a></li>
                             <li><a class="dropdown-item" href="#">Jackets</a></li>
                             <li><a class="dropdown-item" href="#">Pants</a></li>
-                            <li><a class="dropdown-item" href="#">Accessories</a></li>
+                            <li><a class="dropdown-item" href="#">Accessories</a></li>-->
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="womenDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Women</a>
                         <ul class="dropdown-menu" aria-labelledby="womenDropdown">
-                            <li><a class="dropdown-item" href="#">Tops</a></li>
+                            <li><a class="dropdown-item" href="WomenTop.php">Tops</a></li>
                             <li><a class="dropdown-item" href="WomenDresses.php">Dresses</a></li>
-                            <li><a class="dropdown-item" href="#">Hoodies</a></li>
+                            <!--<li><a class="dropdown-item" href="#">Hoodies</a></li>
                             <li><a class="dropdown-item" href="#">Jackets</a></li>
                             <li><a class="dropdown-item" href="#">Skirts</a></li>
-                            <li><a class="dropdown-item" href="#">Accessories</a></li>
+                            <li><a class="dropdown-item" href="#">Accessories</a></li>-->
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="#">Sale</a></li>
@@ -51,8 +51,8 @@
     </nav>
     <div class="collapse bg-light border-top" id="searchSection">
         <div class="container py-3">
-            <form class="d-flex justify-content-center">
-                <input class="form-control me-2 w-50" type="search" placeholder="Search" aria-label="Search">
+            <form action="search_results.php" method="GET" class="d-flex justify-content-center">
+                <input name="query" class="form-control me-2 w-50" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-dark" type="submit">Search</button>
             </form>
         </div>

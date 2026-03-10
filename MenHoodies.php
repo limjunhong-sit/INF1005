@@ -6,20 +6,19 @@ $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
 $sql = "SELECT p.product_id, p.name, p.price, p.image_url 
         FROM products p
         JOIN categories c ON p.category_id = c.category_id
-        WHERE c.department = 'Men' AND c.name = 'T-Shirts'";
+        WHERE c.department = 'Men' AND c.name = 'Hoodies'";
 
 if ($sort == '1') {
-    $sql .= " ORDER BY p.price ASC"; // Low to High
+    $sql .= " ORDER BY p.price ASC"; 
 } elseif ($sort == '2') {
-    $sql .= " ORDER BY p.price DESC"; // High to Low
+    $sql .= " ORDER BY p.price DESC"; 
 } elseif ($sort == '3') {
-    $sql .= " ORDER BY p.product_id DESC"; // Newest (Sorted by ID)
+    $sql .= " ORDER BY p.product_id DESC"; 
 }
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 
 <?php include 'head.php'; ?>
@@ -28,7 +27,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         <main class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Men's T-Shirts</h2>
+                <h2>Men's Hoodies</h2>
                 
                 <form method="GET" action="">
                     <select name="sort" class="form-select w-auto" aria-label="Sort products" onchange="this.form.submit()">
@@ -46,20 +45,23 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php foreach ($products as $item): ?>
                         <div class="col">
                             <div class="card h-100 shadow-sm border-0">
-                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($item['name']); ?>" style="object-fit: cover; height: 300px; background-color: #f8f9fa;">
-                                
+                                <a href="product_details.php?id=<?php echo $item['product_id']; ?>" class="text-decoration-none">
+                                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" class="card-img-top" alt="...">
+                                </a>
                                 <div class="card-body text-center">
-                                    <h5 class="card-title fs-6"><?php echo htmlspecialchars($item['name']); ?></h5>
+                                    <a href="product_details.php?id=<?php echo $item['product_id']; ?>" class="text-decoration-none text-dark">
+                                        <h5 class="card-title fs-6"><?php echo htmlspecialchars($item['name']); ?></h5>
+                                    </a>
                                     <p class="card-text fw-bold">$<?php echo number_format($item['price'], 2); ?></p>
                                     
-                                    <button class="btn btn-outline-dark w-100">Add to Cart</button>
+                                    <a href="product_details.php?id=<?php echo $item['product_id']; ?>" class="btn btn-outline-dark w-100">View Details</a>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-12">
-                        <p class="text-muted">No products found in this category right now.</p>
+                        <p class="text-muted">No hoodies found right now. Check back soon!</p>
                     </div>
                 <?php endif; ?>
 
