@@ -27,7 +27,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         <main class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Men's Hoodies</h2>
+                <h2>Women's Dresses</h2>
                 
                 <form method="GET" action="">
                     <select name="sort" class="form-select w-auto" aria-label="Sort products" onchange="this.form.submit()">

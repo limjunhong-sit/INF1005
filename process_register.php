@@ -15,10 +15,11 @@ $errorMsg = "";
 // Get form data
 $fname = trim($_POST['fname'] ?? '');
 $lname = trim($_POST['lname'] ?? '');
-$email = trim($_POST['email'] ?? '');
+$email = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
 $pwd = $_POST['pwd'] ?? '';
 $pwd_confirm = $_POST['pwd_confirm'] ?? '';
 
+$password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/";
 // Validate required fields
 if (empty($fname) || empty($lname) || empty($email) || empty($pwd) || empty($pwd_confirm)) {
     $errorMsg = "All fields are required.";
@@ -29,13 +30,38 @@ elseif ($pwd !== $pwd_confirm) {
     $errorMsg = "Passwords do not match.";
     $success = false;
 }
+elseif (!preg_match($password_regex, $pwd)) {
+    $errorMsg = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
+    $success = false;
+}
 else {
     $pwd_hashed = password_hash($pwd, PASSWORD_DEFAULT);
+
+    include 'db_connect.php'; 
+
+    try {
+        $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, created_at, role) VALUES (?, ?, ?, ?, NOW(), 'customer')");
+        
+        if ($stmt->execute([$fname, $lname, $email, $pwd_hashed])) {
+            $success = true;
+        } else {
+            $errorMsg = "Registration failed.";
+            $success = false;
+        }
+    } catch (PDOException $e) {
+        if ($e->getCode() == 23000) {
+            $errorMsg = "This email is already registered.";
+        } else {
+            $errorMsg = "Database error: " . $e->getMessage();
+        }
+        $success = false;
+    }
 }
 
 /*
 * Helper function to write the member data to the database.
 */
+/*
 function saveMemberToDB()
 {
     global $fname, $lname, $email, $pwd_hashed, $errorMsg, $success;
@@ -80,7 +106,7 @@ function saveMemberToDB()
 if ($success) {
     saveMemberToDB();
 }
-
+*/
 ?>
 <!DOCTYPE html>
 <html lang="en">

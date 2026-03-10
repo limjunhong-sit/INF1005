@@ -8,19 +8,24 @@
                 <h2 class="text-center mb-4" style="font-family: 'Bebas Neue', serif;">Sign In</h2>
                 <div class="row justify-content-center">
                     <div class="col-md-6">
-                        <form action="process_signin.php" method="POST" class="border rounded p-4 bg-light">
+                        <form action="process_signin.php" method="POST" class="border rounded p-4 bg-light shadow-sm">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <input type="email" class="form-control" id="email" name="email" autofocus required>
                             </div>
                             <div class="mb-3">
                                 <label for="pwd" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="pwd" name="pwd" required>
                             </div>
-                            <button type="submit" class="btn btn-dark w-100">Sign In</button>
-                            <p class="mt-3 mb-0 text-center text-muted small">Don't have an account? <a href="register.php">Register</a></p>
+                            <button type="submit" class="btn btn-dark w-100 py-2">Sign In</button>
+
+                            <div class="mt-3 text-center">
+                                <p class="mb-0 text-muted small">Don't have an account? 
+                                    <a href="register.php" class="text-dark fw-bold text-decoration-none">Register</a>
+                                </p>
+                            </div>
                         </form>
-                    </div>
+                    </div>    
                 </div>
             </section>
         </main>

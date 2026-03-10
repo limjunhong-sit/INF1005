@@ -1,3 +1,4 @@
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <!DOCTYPE html>
 <html lang="en">
     <?php include 'head.php'; ?>
@@ -5,8 +6,17 @@
         <?php include 'header.php'; ?>
         <main>
 
-            <div class="text-center py-3">
-                <h2 style="font-family: 'Italiana', serif; font-size: 2rem;">Welcome to UniClothes</h2>
+            <div class="text-center py-4 bg-light border-bottom">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <h2 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 2px;">
+                        WELCOME BACK, <?php echo strtoupper(htmlspecialchars($_SESSION['first_name'])); ?>!
+                    </h2>
+                    <p style="font-family: 'Italiana', serif; font-size: 1.1rem;" class="text-muted">
+                        Ready for some fresh campus style?
+                    </p>
+                <?php else: ?>
+                    <h2 style="font-family: 'Italiana', serif; font-size: 2rem;">Welcome to UniClothes</h2>
+                <?php endif; ?>
             </div>
 
             <section id="home" style='margin: 0;'>     
@@ -34,14 +44,13 @@
         <?php include 'footer.php'; ?>
 
          <script>
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
             });
-        });
-
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
     </script>
     </body>

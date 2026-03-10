@@ -1,3 +1,4 @@
+<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -42,9 +43,16 @@
                     <li class="nav-item">
                         <button class="btn nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">🔍</button>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="#">Cart</a></li>
-                    <li class="nav-item"><a class="nav-link" href="register.php">Register</a></li>
-                    <li class="nav-item"><a class="nav-link" href="signin.php">Sign In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
+
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="logout.php">Sign Out</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item"><a class="nav-link" href="register.php">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="signin.php">Sign In</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

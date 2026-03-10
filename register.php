@@ -23,11 +23,11 @@
                             </div>
                             <div class="mb-3">
                                 <label for="pwd" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="pwd" name="pwd" required>
+                                <input type="password" class="form-control" id="pwd" name="pwd" minlength="8" required>
                             </div>
                             <div class="mb-3">
                                 <label for="pwd_confirm" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="pwd_confirm" name="pwd_confirm" required>
+                                <input type="password" class="form-control" id="pwd_confirm" name="pwd_confirm" minlength="8" required>
                             </div>
                             <button type="submit" class="btn btn-dark w-100">Register</button>
                         </form>
