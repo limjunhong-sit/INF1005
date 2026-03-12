@@ -122,6 +122,13 @@ footer {
     border-left: 1px solid var(--border);
 }
 
+.card-img-top {
+    height: 350px;
+    width: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
 .stat {
     opacity: 0;
     transform: translateY(20px);
@@ -299,7 +306,8 @@ footer {
     .hero,
     .story-grid,
     .mv-grid,
-    .values-grid {
+    .values-grid 
+    .contact-grid {
         grid-template-columns: 1fr;
     }
 
@@ -379,10 +387,4 @@ footer {
     font-weight: 300;
     line-height: 1.85;
     color: var(--mid);
-}
-
-@media (max-width: 768px) {
-    .contact-grid {
-        grid-template-columns: 1fr;
-    }
 }

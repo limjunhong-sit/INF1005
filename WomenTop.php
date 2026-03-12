@@ -45,13 +45,16 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php foreach ($products as $item): ?>
                         <div class="col">
                             <div class="card h-100 shadow-sm border-0">
-                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($item['name']); ?>" style="object-fit: cover; height: 300px; background-color: #f8f9fa;">
-                                
+                                <a href="product_details.php?id=<?php echo $item['product_id']; ?>" class="text-decoration-none">
+                                    <img src="<?php echo htmlspecialchars($item['image_url']); ?>" class="card-img-top" alt="...">
+                                </a>
                                 <div class="card-body text-center">
-                                    <h5 class="card-title fs-6"><?php echo htmlspecialchars($item['name']); ?></h5>
+                                    <a href="product_details.php?id=<?php echo $item['product_id']; ?>" class="text-decoration-none text-dark">
+                                        <h5 class="card-title fs-6"><?php echo htmlspecialchars($item['name']); ?></h5>
+                                    </a>
                                     <p class="card-text fw-bold">$<?php echo number_format($item['price'], 2); ?></p>
                                     
-                                    <button class="btn btn-outline-dark w-100">Add to Cart</button>
+                                    <a href="product_details.php?id=<?php echo $item['product_id']; ?>" class="btn btn-outline-dark w-100">View Details</a>
                                 </div>
                             </div>
                         </div>
