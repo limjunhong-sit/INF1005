@@ -1,9 +1,4 @@
 <?php 
-/*
-* Process member registration form and save to database.
-*/
-
-// Redirect if accessed without POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: register.php');
     exit;
@@ -12,29 +7,31 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $success = true;
 $errorMsg = "";
 
-// Get form data
 $fname = trim($_POST['fname'] ?? '');
 $lname = trim($_POST['lname'] ?? '');
-$email = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
+$email = trim($_POST['email'] ?? '');
 $pwd = $_POST['pwd'] ?? '';
 $pwd_confirm = $_POST['pwd_confirm'] ?? '';
 
 $password_regex = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/";
-// Validate required fields
+$name_regex = "/^[a-zA-Z\s'\-]{2,50}$/";
+
 if (empty($fname) || empty($lname) || empty($email) || empty($pwd) || empty($pwd_confirm)) {
     $errorMsg = "All fields are required.";
     $success = false;
-}
-// Validate password match
-elseif ($pwd !== $pwd_confirm) {
-    $errorMsg = "Passwords do not match.";
+} elseif (!preg_match($name_regex, $fname) || !preg_match($name_regex, $lname)) {
+    $errorMsg = "Names may only contain letters, spaces, hyphens, or apostrophes.";
     $success = false;
-}
-elseif (!preg_match($password_regex, $pwd)) {
+} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errorMsg = "Please enter a valid email address.";
+    $success = false;
+} elseif (!preg_match($password_regex, $pwd)) {
     $errorMsg = "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.";
     $success = false;
-}
-else {
+} elseif ($pwd !== $pwd_confirm) {
+    $errorMsg = "Passwords do not match.";
+    $success = false;
+} else {
     $pwd_hashed = password_hash($pwd, PASSWORD_DEFAULT);
 
     include 'db_connect.php'; 
@@ -58,55 +55,6 @@ else {
     }
 }
 
-/*
-* Helper function to write the member data to the database.
-*/
-/*
-function saveMemberToDB()
-{
-    global $fname, $lname, $email, $pwd_hashed, $errorMsg, $success;
-
-    // Create database connection
-    $config = @parse_ini_file('/var/www/private/db-config.ini');
-    $db = $config['database'] ?? $config;
-
-    if (!$config) {
-        $errorMsg = "Failed to read database config file.";
-        $success = false;
-    } else {
-        $conn = new mysqli(
-            $db['servername'] ?? 'localhost',
-            $db['username'] ?? '',
-            $db['password'] ?? '',
-            $db['dbname'] ?? ''
-        );
-
-        if ($conn->connect_error) {
-            $errorMsg = "Connection failed: " . $conn->connect_error;
-            $success = false;
-        } else {
-            $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password, created_at, role) VALUES (?, ?, ?, ?, NOW(), 'customer')");
-
-            if ($stmt) {
-                $stmt->bind_param("ssss", $fname, $lname, $email, $pwd_hashed);
-                if (!$stmt->execute()) {
-                    $errorMsg = "Registration failed: " . $stmt->error;
-                    $success = false;
-                }
-                $stmt->close();
-            } else {
-                $errorMsg = "Database error: " . $conn->error;
-                $success = false;
-            }
-            $conn->close();
-        }
-    }
-}
-
-if ($success) {
-    saveMemberToDB();
-}
-*/
 ?>
 <!DOCTYPE html>
 <html lang="en">

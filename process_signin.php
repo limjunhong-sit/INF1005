@@ -1,9 +1,7 @@
 <?php 
-// 1. Include your working connection and start the session
 include 'db_connect.php'; 
 session_start();
 
-// Redirect if accessed without POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: signin.php');
     exit;
@@ -19,16 +17,16 @@ $pwd = $_POST['pwd'] ?? '';
 if (empty($email) || empty($pwd)) {
     $errorMsg = "Email and password are required.";
     $success = false;
+} elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errorMsg = "Please enter a valid email address.";
+    $success = false; 
 } else {
     try {
-        // Use your existing $pdo object!
         $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, email, password, role FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        // 4. Check if user exists and password matches
+
         if ($user && password_verify($pwd, $user['password'])) {
-            // Success! Store info in Session
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['first_name'] = $user['first_name'];
             $_SESSION['email'] = $user['email'];
@@ -53,7 +51,7 @@ if (empty($email) || empty($pwd)) {
         <?php include 'header.php'; ?>
         <main class="container py-5">
             <?php if (!$success): ?>
-                <div class="alert alert-danger">
+                <div class="alert alert-danger" role="alert">
                     <h4>Sign In Failed</h4>
                     <p><?php echo htmlspecialchars($errorMsg); ?></p>
                     <a href="signin.php" class="btn btn-dark">Try again</a>

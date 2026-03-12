@@ -5,7 +5,6 @@
     <body>
         <?php include 'header.php'; ?>
         <main>
-
             <div class="text-center py-4 bg-light border-bottom">
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <h2 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 2px;">
@@ -41,9 +40,8 @@
                 </div>
             </section>
         </main>
-        <?php include 'footer.php'; ?>
-
-         <script>
+        <?php include 'footer.php'; ?>               
+        <script>
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -52,6 +50,6 @@
                 });
             });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-    </script>
+        </script>
     </body>
 </html>
