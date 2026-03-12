@@ -71,6 +71,24 @@
                 </div>
                 </section>
 
+                <section class="section">
+                     <h2 class="visually-hidden">Contact Us</h2>
+                <span class="section-tag">Contact Us</span>
+                <div class="contact-grid">
+                    <div class="contact-card fade-in-el">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-title">Email Us</div>
+                        <p class="contact-body">Have questions or want to collaborate? Reach out to us at <a href="mailto:UniClothesSG@gmail.com">UniClothesSG@gmail.com</a></p>
+                    </div>
+                    <div class="contact-card fade-in-el">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-title">Follow Us</div>
+                        <p class="contact-body">@uniclothes.sg</p>
+                    </div>
+                </div>
+            </section>
+
+
         </main>
         <?php include 'footer.php'; ?>
         <script>

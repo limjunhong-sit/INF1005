@@ -323,3 +323,66 @@ footer {
         gap: 24px;
     }
 }
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 20px;
+}
+
+.contact-card {
+    padding: 56px 48px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease;
+}
+
+.contact-card:hover {
+    background: var(--accent-light);
+}
+
+.contact-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+}
+
+.contact-card:hover::after {
+    width: 100%;
+}
+
+.contact-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+}
+
+.contact-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--charcoal);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.contact-body {
+    font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--mid);
+}
+
+@media (max-width: 768px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
