@@ -19,8 +19,13 @@ if (!$product) {
     <main class="container my-5">
         <div class="row pt-lg-5">
             <div class="col-md-6 mb-4">
-                <img src="<?php echo htmlspecialchars($product['image_url']); ?>" class="img-fluid rounded shadow-sm" alt="<?php echo htmlspecialchars($product['name']); ?>">
-            </div>
+                <div class="img-wrap rounded shadow-sm overflow-hidden">
+                    <img src="<?php echo htmlspecialchars($product['image_url']); ?>" 
+                         class="img-fluid" 
+                         alt="<?php echo htmlspecialchars($product['name']); ?>">
+                    <div class="colour-overlay" id="productOverlay"></div>
+                </div>
+            </div> 
 
             <div class="col-md-6">
                 <nav aria-label="breadcrumb">
@@ -42,6 +47,8 @@ if (!$product) {
                 <p class="text-muted small">
                     Availability: <span class="text-success"><?php echo $product['stock_quantity']; ?> in stock</span>
                 </p>
+
+                <?php include 'color.php'; ?>
 
                 <button class="btn btn-dark btn-lg px-5 w-100 w-md-auto">Add to Cart</button>
             </div>

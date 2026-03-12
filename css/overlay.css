@@ -1,0 +1,46 @@
+div.swatch {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+    align-self: center !important;
+    border-radius: 50% !important;
+    border: 2px solid transparent !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    transition: transform 0.15s, border-color 0.15s;
+}
+
+div.swatch:hover { transform: scale(1.2) !important; }
+div.swatch.active { border-color: #111 !important; transform: scale(1.12) !important; }
+
+.swatches {
+    display: flex !important;
+    gap: 8px !important;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    align-items: center !important;
+}
+
+.img-wrap {
+    position: relative;
+    overflow: hidden;
+}
+
+.img-wrap img {
+    width: 100%;
+    display: block;
+}
+
+.colour-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: transparent;
+    mix-blend-mode: hue;
+    pointer-events: none;
+    transition: background-color 0.3s ease;
+}
