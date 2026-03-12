@@ -1,3 +1,30 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') { //admin check
+    header("Location: signin.php");
+    exit();
+}
+include 'db_connect.php';
+
+$totalProducts = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+$menItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Men'")->fetchColumn();
+$womenItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Women'")->fetchColumn();
+
+// Read the threshold from the session, or default to 5 (temporary until database has settings table)
+$threshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM products WHERE stock_quantity < ?");
+$stmt->execute([$threshold]);
+$lowStock = $stmt->fetchColumn();
+
+$sql = "SELECT p.*, c.name as cat_name, c.department 
+        FROM products p 
+        JOIN categories c ON p.category_id = c.category_id 
+        ORDER BY p.product_id DESC";
+$stmt = $pdo->query($sql);
+$products = $stmt->fetchAll();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,43 +37,7 @@
 </head>
 <body>
 
-<aside class="sidebar">
-    <div class="sidebar-brand">
-        <h1>UniClothes</h1>
-        <p>Admin Page</p>
-    </div>
-    <nav class="sidebar-nav">
-        <div class="nav-section-label">Management</div>
-        <a href="#" class="nav-link-item active">
-            <span class="icon">👕</span> Products
-        </a>
-        <a href="#" class="nav-link-item">
-            <span class="icon">📦</span> Orders
-        </a>
-        <a href="#" class="nav-link-item">
-            <span class="icon">👥</span> Customers
-        </a>
-        <a href="#" class="nav-link-item">
-            <span class="icon">🏷️</span> Categories
-        </a>
-        <div class="nav-section-label" style="margin-top:16px">Reports</div>
-        <a href="#" class="nav-link-item">
-            <span class="icon">📊</span> Analytics
-        </a>
-        <a href="#" class="nav-link-item">
-            <span class="icon">⚙️</span> Settings
-        </a>
-    </nav>
-    <div class="sidebar-footer">
-        <div class="admin-badge">
-            <div class="admin-avatar">AD</div>
-            <div class="admin-info">
-                <strong>Admin</strong>
-                <span>Administrator</span>
-            </div>
-        </div>
-    </div>
-</aside>
+<?php include 'admin_sidebar.php'; ?>
 
 <div class="main-content">
     <div class="topbar">
@@ -55,39 +46,40 @@
     </div>
 
     <div class="page-body">
-
         <div class="stats-row">
             <div class="stat-card">
                 <div class="stat-label">Total Products</div>
-                <div class="stat-value accent">0</div>
+                <div class="stat-value accent"><?php echo $totalProducts; ?></div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Men's Items</div>
-                <div class="stat-value">0</div>
+                <div class="stat-value"><?php echo $menItems; ?></div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Women's Items</div>
-                <div class="stat-value">0</div>
+                <div class="stat-value"><?php echo $womenItems; ?></div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Low Stock</div>
-                <div class="stat-value warn">0</div>
+                <div class="stat-value warn"><?php echo $lowStock; ?></div>
             </div>
         </div>
 
         <div class="toolbar">
-            <input type="text" class="search-input" placeholder="🔍  Search products...">
-            <select class="filter-select">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍  Search products...">
+            
+            <select id="deptFilter" class="filter-select">
                 <option value="">All Departments</option>
-                <option value="men">Men</option>
-                <option value="women">Women</option>
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
             </select>
-            <select class="filter-select">
+            
+            <select id="catFilter" class="filter-select">
                 <option value="">All Categories</option>
-                <option value="tshirts">T-Shirts</option>
-                <option value="hoodies">Hoodies</option>
-                <option value="dresses">Dresses</option>
-                <option value="tops">Tops</option>
+                <option value="T-Shirts">T-Shirts</option>
+                <option value="Hoodies">Hoodies</option>
+                <option value="Dresses">Dresses</option>
+                <option value="Tops">Tops</option>
             </select>
         </div>
 
@@ -104,82 +96,43 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php foreach ($products as $p): ?>
                     <tr>
                         <td>
                             <div class="product-cell">
-                                <div class="product-img-placeholder">👕</div>
-                                <span class="product-name">Charcoal Zip Hoodie</span>
+                                <img src="<?php echo htmlspecialchars($p['image_url']); ?>" width="30" height="30" class="rounded me-2">
+                                <span class="product-name"><?php echo htmlspecialchars($p['name']); ?></span>
                             </div>
                         </td>
-                        <td><span class="badge-dept badge-men">Men</span></td>
-                        <td>Hoodies</td>
-                        <td class="price">$54.99</td>
-                        <td class="stock-ok">25 in stock</td>
                         <td>
-                            <div class="action-btns">
-                                <button class="btn-edit" onclick="openEditModal('Charcoal Zip Hoodie','54.99','Men','Hoodies',25,'Zip-up hoodie with front pockets. Versatile layering piece.')">Edit</button>
-                                <button class="btn-delete" onclick="openDeleteModal('Charcoal Zip Hoodie')">Delete</button>
+                            <span class="badge-dept badge-<?php echo strtolower($p['department']); ?>">
+                                <?php echo $p['department']; ?>
+                            </span>
+                        </td>
+                        <td><?php echo htmlspecialchars($p['cat_name']); ?></td>
+                        <td class="price">$<?php echo number_format($p['price'], 2); ?></td>
+                        <td class="<?php echo $p['stock_quantity'] < $threshold ? 'stock-low' : 'stock-ok'; ?>">
+                            <?php echo $p['stock_quantity']; ?> in stock
+                        </td>
+                        <td>
+                            <button class="btn-edit" onclick="openEditModal(
+                                <?php echo $p['product_id']; ?>, 
+                                '<?php echo addslashes($p['name']); ?>', 
+                                <?php echo $p['price']; ?>, 
+                                '<?php echo $p['department']; ?>', 
+                                '<?php echo $p['cat_name']; ?>', 
+                                <?php echo $p['stock_quantity']; ?>, 
+                                '<?php echo addslashes($p['description']); ?>',
+                                '<?php echo $p['image_url']; ?>'
+                            )">Edit</button>
+                                <button class="btn-delete" onclick="openDeleteModal(<?php echo $p['product_id']; ?>, '<?php echo addslashes($p['name']); ?>')">Delete</button>
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <div class="product-cell">
-                                <div class="product-img-placeholder">👕</div>
-                                <span class="product-name">Classic White Tee</span>
-                            </div>
-                        </td>
-                        <td><span class="badge-dept badge-men">Men</span></td>
-                        <td>T-Shirts</td>
-                        <td class="price">$24.99</td>
-                        <td class="stock-ok">0 in stock</td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-edit" onclick="openEditModal('Classic White Tee','24.99','Men','T-Shirts',0,'Everyday essential. Soft cotton, relaxed fit.')">Edit</button>
-                                <button class="btn-delete" onclick="openDeleteModal('Classic White Tee')">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="product-cell">
-                                <div class="product-img-placeholder">👗</div>
-                                <span class="product-name">Floral Summer Dress</span>
-                            </div>
-                        </td>
-                        <td><span class="badge-dept badge-women">Women</span></td>
-                        <td>Dresses</td>
-                        <td class="price">$49.99</td>
-                        <td class="stock-low">0 in stock</td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-edit" onclick="openEditModal('Floral Summer Dress','49.99','Women','Dresses',0,'Lightweight floral print wrap dress, perfect for summer.')">Edit</button>
-                                <button class="btn-delete" onclick="openDeleteModal('Floral Summer Dress')">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="product-cell">
-                                <div class="product-img-placeholder">👚</div>
-                                <span class="product-name">Crop Top Coral</span>
-                            </div>
-                        </td>
-                        <td><span class="badge-dept badge-women">Women</span></td>
-                        <td>Tops</td>
-                        <td class="price">$29.99</td>
-                        <td class="stock-ok">0 in stock</td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn-edit" onclick="openEditModal('Crop Top Coral','29.99','Women','Tops',0,'Trendy coral crop top. Perfect for layering.')">Edit</button>
-                                <button class="btn-delete" onclick="openDeleteModal('Crop Top Coral')">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-
     </div>
 </div>
 
@@ -189,54 +142,60 @@
             <h3 id="modalTitle">Add Product</h3>
             <button class="modal-close" onclick="closeModal('productModal')">✕</button>
         </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label>Product Name</label>
-                <input type="text" id="productName" placeholder="e.g. Charcoal Zip Hoodie">
-            </div>
-            <div class="form-row">
+        
+        <form action="admin_process.php" method="POST">
+            <input type="hidden" name="action" value="save">
+            <input type="hidden" name="product_id" id="productId">
+
+            <div class="modal-body">
                 <div class="form-group">
-                    <label>Department</label>
-                    <select id="productDept">
-                        <option value="">Select department</option>
-                        <option value="Men">Men</option>
-                        <option value="Women">Women</option>
-                    </select>
+                    <label>Product Name</label>
+                    <input type="text" name="name" id="productName" placeholder="e.g. Charcoal Zip Hoodie" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select name="dept" id="productDept" required>
+                            <option value="">Select department</option>
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category" id="productCategory" required disabled>
+                            <option value="">Select department first</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Price ($)</label>
+                        <input type="number" name="price" id="productPrice" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity</label>
+                        <input type="number" name="stock" id="productStock" placeholder="0" min="0" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" name="image" id="productImage" placeholder="https://example.com/image.jpg" required>
                 </div>
                 <div class="form-group">
-                    <label>Category</label>
-                    <select id="productCategory">
-                        <option value="">Select category</option>
-                        <option>T-Shirts</option>
-                        <option>Hoodies</option>
-                        <option>Dresses</option>
-                        <option>Tops</option>
-                    </select>
+                    <label>Description</label>
+                    <textarea name="desc" id="productDesc" placeholder="Short product description..." required></textarea>
                 </div>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Price ($)</label>
-                    <input type="number" id="productPrice" placeholder="0.00" step="0.01" min="0">
-                </div>
-                <div class="form-group">
-                    <label>Stock Quantity</label>
-                    <input type="number" id="productStock" placeholder="0" min="0">
-                </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeModal('productModal')">Cancel</button>
+                <button type="submit" class="btn-save" id="modalSaveBtn">Save Product</button>
             </div>
-            <div class="form-group">
-                <label>Image URL</label>
-                <input type="text" id="productImage" placeholder="https://example.com/image.jpg">
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea id="productDesc" placeholder="Short product description..."></textarea>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeModal('productModal')">Cancel</button>
-            <button class="btn-save" id="modalSaveBtn">Save Product</button>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -245,10 +204,16 @@
         <div class="delete-icon">🗑️</div>
         <h3>Delete Product</h3>
         <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?<br>This action cannot be undone.</p>
-        <div class="delete-actions">
-            <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
-            <button class="btn-confirm-delete">Yes, Delete</button>
-        </div>
+        
+        <form action="admin_process.php" method="POST">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="product_id" id="deleteProductId">
+            
+            <div class="delete-actions mt-4">
+                <button type="button" class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+                <button type="submit" class="btn-confirm-delete">Yes, Delete</button>
+            </div>
+        </form>
     </div>
 </div>
 
