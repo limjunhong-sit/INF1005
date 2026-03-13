@@ -81,10 +81,16 @@
                         <p class="contact-body">Have questions or want to collaborate? Reach out to us at <a href="mailto:UniClothesSG@gmail.com">UniClothesSG@gmail.com</a></p>
                     </div>
                     <div class="contact-card fade-in-el">
-                        <div class="contact-icon">📱</div>
-                        <div class="contact-title">Follow Us</div>
-                        <p class="contact-body">@uniclothes.sg</p>
+                        <div class="contact-icon">
+                            <i class="fa-brands fa-instagram"></i>
+                        </div>
+                        <div class="contact-title">Follow Us on Instagram</div>
+                        <p class="contact-body"><a href="https://instagram.com/uniclothes.sg" target="_blank" rel="noopener noreferrer">@uniclothes.sg</a></p>
                     </div>
+                    <div class="contact-card fade-in-el">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-title">Call Us</div>
+                        <p class="contact-body">For customer support, please call us at +65 345 786>
                 </div>
             </section>
 

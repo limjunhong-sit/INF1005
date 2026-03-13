@@ -8,6 +8,48 @@
     --border: #ddd5c8;
 }
 
+/* Dark Mode Variables */
+body.dark-mode {
+    --cream: #1a1a1a;
+    --warm-white: #121212;
+    --charcoal: #f0ece6;
+    --mid: #aaa;
+    --accent: #b5895a;
+    --accent-light: #3a2e22;
+    --border: #2e2e2e;
+}
+
+/* Dark mode specific overrides */
+body.dark-mode .mv-section {
+    background: #0a0a0a;
+}
+
+body.dark-mode .mv-card {
+    background: #1e1e1e;
+}
+
+body.dark-mode .mv-card:hover {
+    background: #2a2a2a;
+}
+
+/* Toggle Button */
+.dark-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--charcoal);
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 2px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.dark-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
 *,
 *::before,
 *::after {
@@ -306,8 +348,7 @@ footer {
     .hero,
     .story-grid,
     .mv-grid,
-    .values-grid 
-    .contact-grid {
+    .values-grid .contact-grid {
         grid-template-columns: 1fr;
     }
 

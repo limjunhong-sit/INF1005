@@ -17,10 +17,6 @@
                         <ul class="dropdown-menu" aria-labelledby="menDropdown">
                             <li><a class="dropdown-item" href="MenTshirt.php">T-Shirts</a></li>
                             <li><a class="dropdown-item" href="MenHoodies.php">Hoodies</a></li>
-                            <!--<li><a class="dropdown-item" href="#">Shirts</a></li>
-                            <li><a class="dropdown-item" href="#">Jackets</a></li>
-                            <li><a class="dropdown-item" href="#">Pants</a></li>
-                            <li><a class="dropdown-item" href="#">Accessories</a></li>-->
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -28,16 +24,15 @@
                         <ul class="dropdown-menu" aria-labelledby="womenDropdown">
                             <li><a class="dropdown-item" href="WomenTop.php">Tops</a></li>
                             <li><a class="dropdown-item" href="WomenDresses.php">Dresses</a></li>
-                            <!--<li><a class="dropdown-item" href="#">Hoodies</a></li>
-                            <li><a class="dropdown-item" href="#">Jackets</a></li>
-                            <li><a class="dropdown-item" href="#">Skirts</a></li>
-                            <li><a class="dropdown-item" href="#">Accessories</a></li>-->
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
                 </ul>
 
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button class="dark-toggle nav-link" id="darkToggle" title="Toggle dark mode">🌙</button>
+                    </li>
                     <li class="nav-item">
                         <button class="btn nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">🔍</button>
                     </li>
