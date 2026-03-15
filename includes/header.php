@@ -45,11 +45,11 @@
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                             <li class="nav-item">
-                                <a class="nav-link fw-bold text-primary" href="admin.php">Dashboard</a>
+                                <a class="nav-link fw-bold text-primary" href="admin/">Dashboard</a>
                             </li>
                         <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="logout.php">Sign Out</a>
+                        <a class="nav-link text-danger" href="auth/logout.php">Sign Out</a>
                     </li>
                 <?php else: ?>
                     <li class="nav-item"><a class="nav-link" href="register.php">Register</a></li>

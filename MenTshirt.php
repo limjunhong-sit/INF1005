@@ -1,5 +1,6 @@
-<?php 
-include 'db_connect.php'; 
+<?php
+require_once __DIR__ . '/config/paths.php';
+require_once ROOT . '/config/db_connect.php'; 
 
 $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
 
@@ -22,7 +23,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
-<?php include 'head.php'; ?>
+<?php include ROOT . '/includes/head.php'; ?>
     <body>
         <?php include 'header.php'; ?>
         
@@ -69,6 +70,6 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </main>
         
-        <?php include 'footer.php'; ?>
+        <?php include ROOT . '/includes/footer.php'; ?>
     </body>
 </html>

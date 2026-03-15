@@ -1,5 +1,6 @@
-<?php 
-include 'db_connect.php'; 
+<?php
+require_once __DIR__ . '/config/paths.php';
+require_once ROOT . '/config/db_connect.php';
 
 $user_search = isset($_GET['query']) ? trim($_GET['query']) : '';
 $products = [];
@@ -14,9 +15,9 @@ if ($user_search !== '') {
 }
 ?>
 
-<?php include 'head.php'; ?>
+<?php include ROOT . '/includes/head.php'; ?>
 <body>
-    <?php include 'header.php'; ?>
+    <?php include ROOT . '/includes/header.php'; ?>
 
     <main class="container my-5">
         <div class="mb-5">
@@ -55,6 +56,6 @@ if ($user_search !== '') {
         </div>
     </main>
 
-    <?php include 'footer.php'; ?>
+    <?php include ROOT . '/includes/footer.php'; ?>
 </body>
 </html>

@@ -7,7 +7,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit('Unauthorized access.'); 
 }
 
-include 'db_connect.php';
+require_once __DIR__ . '/../config/paths.php';
+require_once ROOT . '/config/db_connect.php';
 
 $action = $_POST['action'] ?? '';
 
@@ -81,6 +82,6 @@ if ($action === 'save') {
 }
 
 // Redirect back to dashboard
-header("Location: admin.php");
+header("Location: index.php");
 exit();
 ?>

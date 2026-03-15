@@ -2,10 +2,11 @@
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') { //admin check
-    header("Location: signin.php");
+    header("Location: ../signin.php");
     exit();
 }
-include 'db_connect.php';
+require_once __DIR__ . '/../config/paths.php';
+require_once ROOT . '/config/db_connect.php';
 
 $totalProducts = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
 $menItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Men'")->fetchColumn();
@@ -33,11 +34,11 @@ $products = $stmt->fetchAll();
     <title>UniClothes — Admin Page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
 
-<?php include 'admin_sidebar.php'; ?>
+<?php include ROOT . '/includes/admin_sidebar.php'; ?>
 
 <div class="main-content">
     <div class="topbar">

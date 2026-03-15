@@ -1,8 +1,9 @@
 <?php
+require_once __DIR__ . '/../config/paths.php';
 // 1. Security & Session Check
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: signin.php");
+    header("Location: ../signin.php");
     exit();
 }
 
@@ -40,7 +41,7 @@ $currentThreshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
 </head>
 <body>
 
-<?php include 'admin_sidebar.php'; ?>
+<?php include ROOT . '/includes/admin_sidebar.php'; ?>
 
 <div class="main-content">
     <div class="topbar">

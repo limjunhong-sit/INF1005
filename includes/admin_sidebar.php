@@ -8,10 +8,10 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         <p>Admin Page</p>
     </div>
     <nav class="sidebar-nav">
-        <a href="index.php" class="nav-link-item">
+        <a href="../index.php" class="nav-link-item">
             <span class="icon">🏠</span> Homepage
         </a>
-        <a href="admin.php" class="nav-link-item <?php echo ($currentPage === 'admin.php') ? 'active' : ''; ?>">
+        <a href="index.php" class="nav-link-item <?php echo ($currentPage === 'index.php') ? 'active' : ''; ?>">
             <span class="icon">👕</span> Products
         </a>
         <a href="orders.php" class="nav-link-item <?php echo ($currentPage === 'orders.php') ? 'active' : ''; ?>">
@@ -23,7 +23,7 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         <a href="settings.php" class="nav-link-item <?php echo ($currentPage === 'settings.php') ? 'active' : ''; ?>">
             <span class="icon">⚙️</span> Settings
         </a>
-        <a href="logout.php" class="nav-link-item">
+        <a href="../auth/logout.php" class="nav-link-item">
             <span class="icon">🚪</span> Logout
         </a>
     </nav>

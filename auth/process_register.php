@@ -1,6 +1,6 @@
 <?php 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: register.php');
+    header('Location: ../register.php');
     exit;
 }
 
@@ -34,7 +34,8 @@ if (empty($fname) || empty($lname) || empty($email) || empty($pwd) || empty($pwd
 } else {
     $pwd_hashed = password_hash($pwd, PASSWORD_DEFAULT);
 
-    include 'db_connect.php'; 
+    require_once __DIR__ . '/../config/paths.php';
+    require_once ROOT . '/config/db_connect.php'; 
 
     try {
         $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, created_at, role) VALUES (?, ?, ?, ?, NOW(), 'customer')");
@@ -58,9 +59,10 @@ if (empty($fname) || empty($lname) || empty($email) || empty($pwd) || empty($pwd
 ?>
 <!DOCTYPE html>
 <html lang="en">
-    <?php include __DIR__ . '/head.php'; ?>
+    <?php require_once __DIR__ . '/../config/paths.php'; ?>
+    <?php include ROOT . '/includes/head.php'; ?>
     <body>
-        <?php include __DIR__ . '/header.php'; ?>
+        <?php include ROOT . '/includes/header.php'; ?>
         <main>
             <section class="container py-5">
                 <?php if ($success): ?>
@@ -69,10 +71,10 @@ if (empty($fname) || empty($lname) || empty($email) || empty($pwd) || empty($pwd
                 <?php else: ?>
                     <h4>Error:</h4>
                     <p><?php echo htmlspecialchars($errorMsg); ?></p>
-                    <p><a href="register.php" class="btn btn-dark">Try again</a></p>
+                    <p><a href="../register.php" class="btn btn-dark">Try again</a></p>
                 <?php endif; ?>
             </section>
         </main>
-        <?php include __DIR__ . '/footer.php'; ?>
+        <?php include ROOT . '/includes/footer.php'; ?>
     </body>
 </html>

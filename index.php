@@ -1,9 +1,12 @@
-<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
+<?php
+require_once __DIR__ . '/config/paths.php';
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+?>
 <!DOCTYPE html>
 <html lang="en">
-    <?php include 'head.php'; ?>
+    <?php include ROOT . '/includes/head.php'; ?>
     <body>
-        <?php include 'header.php'; ?>
+        <?php include ROOT . '/includes/header.php'; ?>
         <main>
             <div class="text-center py-4 bg-light border-bottom">
                 <?php if (isset($_SESSION['user_id'])): ?>
@@ -40,7 +43,7 @@
                 </div>
             </section>
         </main>
-        <?php include 'footer.php'; ?>               
+        <?php include ROOT . '/includes/footer.php'; ?>               
         <script>
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {

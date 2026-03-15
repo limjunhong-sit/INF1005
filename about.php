@@ -1,8 +1,9 @@
+<?php require_once __DIR__ . '/config/paths.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
-    <?php include 'head.php'; ?>
+    <?php include ROOT . '/includes/head.php'; ?>
     <body>
-        <?php include 'header.php'; ?>
+        <?php include ROOT . '/includes/header.php'; ?>
         <main>
             <section class="hero">
                 <div class="hero-content fade-in-el visible">
@@ -96,7 +97,7 @@
 
 
         </main>
-        <?php include 'footer.php'; ?>
+        <?php include ROOT . '/includes/footer.php'; ?>
         <script>
             const els = document.querySelectorAll('.fade-in-el');
             const observer = new IntersectionObserver(entries => {

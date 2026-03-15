@@ -1,5 +1,6 @@
-<?php 
-include 'db_connect.php'; 
+<?php
+require_once __DIR__ . '/config/paths.php';
+require_once ROOT . '/config/db_connect.php';
 
 $product_id = isset($_GET['id']) ? $_GET['id'] : header("Location: index.php");
 
@@ -12,9 +13,9 @@ if (!$product) {
 }
 ?>
 
-<?php include 'head.php'; ?>
+<?php include ROOT . '/includes/head.php'; ?>
 <body>
-    <?php include 'header.php'; ?>
+    <?php include ROOT . '/includes/header.php'; ?>
 
     <main class="container my-5">
         <div class="row pt-lg-5">
@@ -48,13 +49,13 @@ if (!$product) {
                     Availability: <span class="text-success"><?php echo $product['stock_quantity']; ?> in stock</span>
                 </p>
 
-                <?php include 'color.php'; ?>
+                <?php include ROOT . '/includes/color.php'; ?>
 
                 <button class="btn btn-dark btn-lg px-5 w-100 w-md-auto">Add to Cart</button>
             </div>
         </div>
     </main>
 
-    <?php include 'footer.php'; ?>
+    <?php include ROOT . '/includes/footer.php'; ?>
 </body>
 </html>

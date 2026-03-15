@@ -1,9 +1,10 @@
-<?php 
-include 'db_connect.php'; 
+<?php
+require_once __DIR__ . '/../config/paths.php';
+require_once ROOT . '/config/db_connect.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: signin.php');
+    header('Location: ../signin.php');
     exit;
 }
 
@@ -31,8 +32,8 @@ if (empty($email) || empty($pwd)) {
             $_SESSION['first_name'] = $user['first_name'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role'];
-            
-            header('Location: index.php');
+
+            header('Location: ../index.php');
             exit;
         } else {
             $errorMsg = "Invalid email or password.";
@@ -46,9 +47,9 @@ if (empty($email) || empty($pwd)) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-    <?php include 'head.php'; ?>
+    <?php include ROOT . '/includes/head.php'; ?>
     <body>
-        <?php include 'header.php'; ?>
+        <?php include ROOT . '/includes/header.php'; ?>
         <main class="container py-5">
             <?php if (!$success): ?>
                 <div class="alert alert-danger" role="alert">
@@ -58,6 +59,6 @@ if (empty($email) || empty($pwd)) {
                 </div>
             <?php endif; ?>
         </main>
-        <?php include 'footer.php'; ?>
+        <?php include ROOT . '/includes/footer.php'; ?>
     </body>
 </html>

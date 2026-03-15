@@ -1,14 +1,15 @@
+<?php require_once __DIR__ . '/config/paths.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
-    <?php include 'head.php'; ?>
+    <?php include ROOT . '/includes/head.php'; ?>
     <body>
-        <?php include 'header.php'; ?>
+        <?php include ROOT . '/includes/header.php'; ?>
         <main>
             <section class="container py-5">
                 <h2 class="text-center mb-4" style="font-family: 'Bebas Neue', serif;">Create Account</h2>
                 <div class="row justify-content-center">
                     <div class="col-md-6">
-                        <form action="process_register.php" method="POST" class="border rounded p-4 bg-light">
+                        <form action="auth/process_register.php" method="POST" class="border rounded p-4 bg-light">
                             <div class="mb-3">
                                 <label for="fname" class="form-label">First Name</label>
                                 <input type="text" class="form-control" id="fname" name="fname" required>
@@ -35,6 +36,6 @@
                 </div>
             </section>
         </main>
-        <?php include 'footer.php'; ?>
+        <?php include ROOT . '/includes/footer.php'; ?>
     </body>
 </html>
