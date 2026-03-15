@@ -3,11 +3,18 @@ require_once __DIR__ . '/config/paths.php';
 require_once ROOT . '/config/db_connect.php'; 
 
 $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
+$categoryFilter = isset($_GET['category']) ? trim($_GET['category']) : '';
 
 $sql = "SELECT p.product_id, p.name, p.price, p.image_url 
         FROM products p
         JOIN categories c ON p.category_id = c.category_id
-        WHERE c.department = 'Men' AND c.name = 'T-Shirts'";
+        WHERE c.department = 'Men'";
+
+$params = [];
+if ($categoryFilter !== '') {
+    $sql .= " AND c.name = ?";
+    $params[] = $categoryFilter;
+}
 
 if ($sort == '1') {
     $sql .= " ORDER BY p.price ASC"; // Low to High
@@ -18,7 +25,7 @@ if ($sort == '1') {
 }
 
 $stmt = $pdo->prepare($sql);
-$stmt->execute();
+$stmt->execute($params);
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
@@ -29,7 +36,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         <main class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Men's T-Shirts</h2>
+                <h2>Men's Collection</h2>
                 
                 <form method="GET" action="">
                     <select name="sort" class="form-select w-auto" aria-label="Sort products" onchange="this.form.submit()">

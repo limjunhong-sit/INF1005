@@ -7,7 +7,7 @@ $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
 $sql = "SELECT p.product_id, p.name, p.price, p.image_url 
         FROM products p
         JOIN categories c ON p.category_id = c.category_id
-        WHERE c.department = 'Women' AND c.name = 'Dresses'";
+        WHERE c.department = 'Women'";
 
 if ($sort == '1') {
     $sql .= " ORDER BY p.price ASC"; 
@@ -28,7 +28,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         <main class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Women's Dresses</h2>
+                <h2>Women's Collection</h2>
                 
                 <form method="GET" action="">
                     <select name="sort" class="form-select w-auto" aria-label="Sort products" onchange="this.form.submit()">
@@ -62,7 +62,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-12">
-                        <p class="text-muted">No hoodies found right now. Check back soon!</p>
+                        <p class="text-muted">No products found right now. Check back soon!</p>
                     </div>
                 <?php endif; ?>
 

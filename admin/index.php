@@ -24,6 +24,22 @@ $sql = "SELECT p.*, c.name as cat_name, c.department
         ORDER BY p.product_id DESC";
 $stmt = $pdo->query($sql);
 $products = $stmt->fetchAll();
+
+// Fetch categories once for dropdowns and JS mapping
+$catSql = "SELECT department, name FROM categories ORDER BY department, name";
+$catStmt = $pdo->query($catSql);
+$categoryRows = $catStmt->fetchAll();
+
+$categoryMap = [];
+$departments = [];
+foreach ($categoryRows as $row) {
+    $dept = $row['department'];
+    $name = $row['name'];
+    $categoryMap[$dept][] = $name;
+    if (!in_array($dept, $departments, true)) {
+        $departments[] = $dept;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +62,19 @@ $products = $stmt->fetchAll();
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
     </div>
 
-    <div class="page-body">
+        <div class="page-body">
+            <?php 
+            // Flash message from admin/process.php
+            $flash = $_SESSION['admin_flash'] ?? null;
+            if ($flash) {
+                unset($_SESSION['admin_flash']);
+                $alertClass = $flash['type'] === 'success' ? 'alert-success' : 'alert-danger';
+            ?>
+                <div class="alert <?php echo $alertClass; ?> alert-dismissible fade show shadow-sm" role="alert">
+                    <?php echo htmlspecialchars($flash['message']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php } ?>
         <div class="stats-row">
             <div class="stat-card">
                 <div class="stat-label">Total Products</div>
@@ -71,16 +99,15 @@ $products = $stmt->fetchAll();
             
             <select id="deptFilter" class="filter-select">
                 <option value="">All Departments</option>
-                <option value="Men">Men</option>
-                <option value="Women">Women</option>
+                <?php foreach ($departments as $dept): ?>
+                    <option value="<?php echo htmlspecialchars($dept); ?>">
+                        <?php echo htmlspecialchars($dept); ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
             
             <select id="catFilter" class="filter-select">
                 <option value="">All Categories</option>
-                <option value="T-Shirts">T-Shirts</option>
-                <option value="Hoodies">Hoodies</option>
-                <option value="Dresses">Dresses</option>
-                <option value="Tops">Tops</option>
             </select>
         </div>
 
@@ -144,9 +171,10 @@ $products = $stmt->fetchAll();
             <button class="modal-close" onclick="closeModal('productModal')">✕</button>
         </div>
         
-        <form action="admin_process.php" method="POST">
+        <form action="process.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="save">
             <input type="hidden" name="product_id" id="productId">
+            <input type="hidden" name="existing_image" id="existingImage">
 
             <div class="modal-body">
                 <div class="form-group">
@@ -183,8 +211,9 @@ $products = $stmt->fetchAll();
                 </div>
                 
                 <div class="form-group">
-                    <label>Image URL</label>
-                    <input type="text" name="image" id="productImage" placeholder="https://example.com/image.jpg" required>
+                    <label>Product Image</label>
+                    <input type="file" name="image_file" id="productImage" accept="image/*">
+                    <small class="text-muted d-block mt-1" id="currentImageInfo"></small>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
@@ -206,7 +235,7 @@ $products = $stmt->fetchAll();
         <h3>Delete Product</h3>
         <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?<br>This action cannot be undone.</p>
         
-        <form action="admin_process.php" method="POST">
+        <form action="process.php" method="POST">
             <input type="hidden" name="action" value="delete">
             <input type="hidden" name="product_id" id="deleteProductId">
             
@@ -218,6 +247,10 @@ $products = $stmt->fetchAll();
     </div>
 </div>
 
-<script src="js/admin.js"></script>
+<script>
+    // Expose category mapping for admin.js
+    window.categoryMap = <?php echo json_encode($categoryMap, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
+</script>
+<script src="../js/admin.js"></script>
 </body>
 </html>

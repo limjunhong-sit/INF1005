@@ -15,15 +15,23 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Men</a>
                         <ul class="dropdown-menu" aria-labelledby="menDropdown">
-                            <li><a class="dropdown-item" href="MenTshirt.php">T-Shirts</a></li>
-                            <li><a class="dropdown-item" href="MenHoodies.php">Hoodies</a></li>
+                            <li><a class="dropdown-item" href="MenTshirt.php?category=T-Shirts">T-Shirts</a></li>
+                            <li><a class="dropdown-item" href="MenTshirt.php?category=Shirts">Shirts</a></li>
+                            <li><a class="dropdown-item" href="MenTshirt.php?category=Hoodies">Hoodies</a></li>
+                            <li><a class="dropdown-item" href="MenTshirt.php?category=Jackets">Jackets</a></li>
+                            <li><a class="dropdown-item" href="MenTshirt.php?category=Pants">Pants</a></li>
+                            <li><a class="dropdown-item" href="MenTshirt.php?category=Accessories">Accessories</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="womenDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Women</a>
                         <ul class="dropdown-menu" aria-labelledby="womenDropdown">
-                            <li><a class="dropdown-item" href="WomenTop.php">Tops</a></li>
-                            <li><a class="dropdown-item" href="WomenDresses.php">Dresses</a></li>
+                            <li><a class="dropdown-item" href="WomenTop.php?category=Tops">Tops</a></li>
+                            <li><a class="dropdown-item" href="WomenTop.php?category=Dresses">Dresses</a></li>
+                            <li><a class="dropdown-item" href="WomenTop.php?category=Hoodies">Hoodies</a></li>
+                            <li><a class="dropdown-item" href="WomenTop.php?category=Jackets">Jackets</a></li>
+                            <li><a class="dropdown-item" href="WomenTop.php?category=Skirts">Skirts</a></li>
+                            <li><a class="dropdown-item" href="WomenTop.php?category=Accessories">Accessories</a></li>
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>

@@ -6,6 +6,9 @@ function openAddModal() {
     document.getElementById('productPrice').value = '';
     document.getElementById('productStock').value = '';
     document.getElementById('productImage').value = '';
+    document.getElementById('existingImage').value = '';
+    const info = document.getElementById('currentImageInfo');
+    if (info) info.textContent = '';
     document.getElementById('productDesc').value = '';
     document.getElementById('productDept').value = '';
     // Lock the category dropdown until a department is chosen
@@ -22,13 +25,19 @@ function openEditModal(id, name, price, dept, category, stock, desc, img) {
     document.getElementById('productStock').value = stock;
     document.getElementById('productDesc').value = desc;
     document.getElementById('productDept').value = dept;
-    document.getElementById('productImage').value = img;
+    document.getElementById('productImage').value = ''; // file inputs cannot be pre-filled
+    document.getElementById('existingImage').value = img;
+    const info = document.getElementById('currentImageInfo');
+    if (info) {
+        info.textContent = img ? 'Current image: ' + img : 'No image uploaded yet.';
+    }
     populateCategories(dept, category);
     document.getElementById('productModal').classList.add('show');
 }
 
-function openDeleteModal(name) {
+function openDeleteModal(id, name) {
     document.getElementById('deleteProductName').textContent = '"' + name + '"';
+    document.getElementById('deleteProductId').value = id;
     document.getElementById('deleteModal').classList.add('show');
 }
 
@@ -75,11 +84,8 @@ document.addEventListener("DOMContentLoaded", function() {
     if(catFilter) catFilter.addEventListener('change', filterTable);
 });
 
-// 1. Define which categories belong to which department
-const categoryMap = {
-    'Men': ['T-Shirts', 'Hoodies'],
-    'Women': ['Dresses', 'Tops']
-};
+// 1. Define which categories belong to which department (injected from PHP)
+const categoryMap = window.categoryMap || {};
 
 const deptSelect = document.getElementById('productDept');
 const catSelect = document.getElementById('productCategory');
