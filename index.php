@@ -17,7 +17,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                         Ready for some fresh campus style?
                     </p>
                 <?php else: ?>
-                    <h2 style="font-family: 'Italiana', serif; font-size: 2rem;">Welcome to UniClothes</h2>
+                    <h2 style="font-family: 'Italiana', serif; font-size: 3rem;">Welcome to UniClothes</h2>
                 <?php endif; ?>
             </div>
 
@@ -53,23 +53,6 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                 });
             });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-        </script>
-
-        <script>
-            const toggle = document.getElementById('darkToggle');
-            const body = document.body;
-
-            if (localStorage.getItem('darkMode') === 'true') {
-                body.classList.add('dark-mode');
-                toggle.textContent = '☀️';
-            }
-
-            toggle.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                const isDark = body.classList.contains('dark-mode');
-                toggle.textContent = isDark ? '☀️' : '🌙';
-                localStorage.setItem('darkMode', isDark);
-            });
         </script>
 
     </body>

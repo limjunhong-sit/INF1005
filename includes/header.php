@@ -31,9 +31,6 @@
 
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <button class="dark-toggle nav-link" id="darkToggle" title="Toggle dark mode">🌙</button>
-                    </li>
-                    <li class="nav-item">
                         <button class="btn nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">🔍</button>
                     </li>
                     <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
