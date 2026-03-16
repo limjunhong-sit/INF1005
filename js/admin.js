@@ -22,7 +22,12 @@ function openEditModal(id, name, price, dept, category, stock, desc, img) {
     document.getElementById('productStock').value = stock;
     document.getElementById('productDesc').value = desc;
     document.getElementById('productDept').value = dept;
-    document.getElementById('productImage').value = img;
+    // For file inputs we cannot pre-fill the value for security reasons.
+    // Leave the file field empty so the existing image is kept unless a new file is chosen.
+    const fileInput = document.getElementById('productImage');
+    if (fileInput) {
+        fileInput.value = '';
+    }
     populateCategories(dept, category);
     document.getElementById('productModal').classList.add('show');
 }
