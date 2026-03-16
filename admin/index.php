@@ -63,6 +63,14 @@ while ($row = $catStmt->fetch(PDO::FETCH_ASSOC)) {
     </div>
 
     <div class="page-body">
+        <?php if (!empty($_SESSION['admin_error'])): ?>
+            <div class="alert alert-danger">
+                <?php 
+                    echo htmlspecialchars($_SESSION['admin_error']);
+                    unset($_SESSION['admin_error']);
+                ?>
+            </div>
+        <?php endif; ?>
         <div class="stats-row">
             <div class="stat-card">
                 <div class="stat-label">Total Products</div>
