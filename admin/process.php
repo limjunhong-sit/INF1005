@@ -32,9 +32,37 @@ if ($action === 'save') {
     $desc = htmlspecialchars(trim($_POST['desc'] ?? ''), ENT_QUOTES, 'UTF-8');
     $dept = htmlspecialchars(trim($_POST['dept'] ?? ''), ENT_QUOTES, 'UTF-8');
     $cat  = htmlspecialchars(trim($_POST['category'] ?? ''), ENT_QUOTES, 'UTF-8');
-    
-    // Sanitize the URL to remove illegal characters
-    $img  = filter_var(trim($_POST['image'] ?? ''), FILTER_SANITIZE_URL);
+
+    // Handle image upload (or existing image on edit)
+    $img = '';
+    $uploadDir = ROOT . '/uploads/';
+    $relativeUploadDir = 'uploads/'; // stored in DB, used on frontend
+
+    // Ensure upload directory exists
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+
+    if (!empty($_FILES['image']['name'])) {
+        $originalName = basename($_FILES['image']['name']);
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $safeBase = preg_replace('/[^a-zA-Z0-9_-]/', '_', pathinfo($originalName, PATHINFO_FILENAME));
+        $filename = $safeBase . '_' . time() . '.' . $extension;
+        $targetPath = $uploadDir . $filename;
+
+        if (!move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
+            die("Error: Failed to upload image.");
+        }
+
+        $img = $relativeUploadDir . $filename;
+    } else {
+        // When editing, keep existing image if no new file uploaded
+        if (!empty($id)) {
+            $stmtImg = $pdo->prepare("SELECT image_url FROM products WHERE product_id = ?");
+            $stmtImg->execute([$id]);
+            $img = $stmtImg->fetchColumn() ?: '';
+        }
+    }
 
     // 2. Validate Numbers (Ensure they are actually numbers)
     $price = filter_var($_POST['price'] ?? 0, FILTER_VALIDATE_FLOAT);
@@ -42,7 +70,7 @@ if ($action === 'save') {
 
     // 3. Final Verification: Stop the script if validation failed
     if (empty($name) || empty($desc) || empty($img)) {
-        die("Error: Name, description, and image URL cannot be empty.");
+        die("Error: Name, description, and image cannot be empty.");
     }
     if ($price === false || $price < 0) {
         die("Error: Price must be a valid positive number.");

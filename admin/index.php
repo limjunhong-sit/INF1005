@@ -18,12 +18,24 @@ $stmt = $pdo->prepare("SELECT COUNT(*) FROM products WHERE stock_quantity < ?");
 $stmt->execute([$threshold]);
 $lowStock = $stmt->fetchColumn();
 
+// Load products for the table
 $sql = "SELECT p.*, c.name as cat_name, c.department 
         FROM products p 
         JOIN categories c ON p.category_id = c.category_id 
         ORDER BY p.product_id DESC";
 $stmt = $pdo->query($sql);
 $products = $stmt->fetchAll();
+
+// Load all categories to drive dynamic category dropdowns
+$catStmt = $pdo->query("SELECT department, name FROM categories ORDER BY department, name");
+$categoriesByDept = [];
+while ($row = $catStmt->fetch(PDO::FETCH_ASSOC)) {
+    $dept = $row['department'];
+    if (!isset($categoriesByDept[$dept])) {
+        $categoriesByDept[$dept] = [];
+    }
+    $categoriesByDept[$dept][] = $row['name'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -37,6 +49,11 @@ $products = $stmt->fetchAll();
     <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
+
+<script>
+    // Expose category list from database to admin.js
+    window.categoryMap = <?php echo json_encode($categoriesByDept); ?>;
+</script>
 
 <?php include ROOT . '/includes/admin_sidebar.php'; ?>
 
@@ -149,7 +166,7 @@ $products = $stmt->fetchAll();
             <button class="modal-close" onclick="closeModal('productModal')">✕</button>
         </div>
         
-        <form action="admin_process.php" method="POST">
+        <form action="process.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="save">
             <input type="hidden" name="product_id" id="productId">
 
@@ -188,8 +205,8 @@ $products = $stmt->fetchAll();
                 </div>
                 
                 <div class="form-group">
-                    <label>Image URL</label>
-                    <input type="text" name="image" id="productImage" placeholder="https://example.com/image.jpg" required>
+                    <label>Image</label>
+                    <input type="file" name="image" id="productImage" accept="image/*">
                 </div>
                 <div class="form-group">
                     <label>Description</label>
@@ -211,7 +228,7 @@ $products = $stmt->fetchAll();
         <h3>Delete Product</h3>
         <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?<br>This action cannot be undone.</p>
         
-        <form action="admin_process.php" method="POST">
+        <form action="process.php" method="POST">
             <input type="hidden" name="action" value="delete">
             <input type="hidden" name="product_id" id="deleteProductId">
             

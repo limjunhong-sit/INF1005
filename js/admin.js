@@ -27,8 +27,9 @@ function openEditModal(id, name, price, dept, category, stock, desc, img) {
     document.getElementById('productModal').classList.add('show');
 }
 
-function openDeleteModal(name) {
+function openDeleteModal(id, name) {
     document.getElementById('deleteProductName').textContent = '"' + name + '"';
+    document.getElementById('deleteProductId').value = id;
     document.getElementById('deleteModal').classList.add('show');
 }
 
@@ -76,7 +77,8 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // 1. Define which categories belong to which department
-const categoryMap = {
+// Prefer server-provided map if available, fallback to defaults
+const categoryMap = window.categoryMap || {
     'Men': ['T-Shirts', 'Hoodies'],
     'Women': ['Dresses', 'Tops']
 };
