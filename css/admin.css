@@ -1,3 +1,27 @@
+/* RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .page-body {
+        padding: 20px 16px;
+    }
+
+    .settings-card {
+        max-width: 100%;
+    }
+}
 :root {
     --bg: #f5f0e8;
     --surface: #fdfaf5;
@@ -193,6 +217,22 @@ body {
 .page-body {
     padding: 28px 32px;
     flex: 1;
+}
+
+/* SETTINGS PAGE LAYOUT */
+.settings-page {
+    display: flex;
+    justify-content: center;
+}
+
+.settings-card {
+    width: 100%;
+    max-width: 600px;
+}
+
+.settings-card-title {
+    font-family: 'Bebas Neue', cursive;
+    letter-spacing: 1px;
 }
 
 .stats-row {

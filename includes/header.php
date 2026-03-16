@@ -2,8 +2,8 @@
 <header class="sticky-top">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">
-                <img src="image/ecommerce_logo.png" alt="" width="40" height="30" class="rounded-circle">UniClothes
+            <a class="navbar-brand" href="/index.php">
+                <img src="/image/ecommerce_logo.png" alt="" width="40" height="30" class="rounded-circle">UniClothes
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -11,28 +11,28 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="index.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="/index.php">Home</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Men</a>
                         <ul class="dropdown-menu" aria-labelledby="menDropdown">
-                            <li><a class="dropdown-item" href="shop.php?dept=Men">All Men's</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=T-Shirts">T-Shirts</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=Hoodies">Hoodies</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=Jackets">Jackets</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=Pants">Pants</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=Accessories">Accessories</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Men">All Men's</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Men&cat=T-Shirts">T-Shirts</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Men&cat=Hoodies">Hoodies</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Men&cat=Jackets">Jackets</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Men&cat=Pants">Pants</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Men&cat=Accessories">Accessories</a></li>
 
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="womenDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Women</a>
                         <ul class="dropdown-menu" aria-labelledby="womenDropdown">
-                            <li><a class="dropdown-item" href="shop.php?dept=Women">All Women's</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Tops">Tops</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Dresses">Dresses</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Jackets">Jackets</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Skirts">Skirts</a></li>
-                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Accessories">Accessories</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Women">All Women's</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Women&cat=Tops">Tops</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Women&cat=Dresses">Dresses</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Women&cat=Jackets">Jackets</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Women&cat=Skirts">Skirts</a></li>
+                            <li><a class="dropdown-item" href="/shop.php?dept=Women&cat=Accessories">Accessories</a></li>
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
@@ -46,22 +46,22 @@
                     </li>
                     <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="cart.php">Cart</a>
+                            <a class="nav-link" href="/cart.php">Cart</a>
                         </li>
                     <?php endif; ?>
 
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                             <li class="nav-item">
-                                <a class="nav-link fw-bold text-primary" href="admin/">Dashboard</a>
+                                <a class="nav-link fw-bold text-primary" href="/admin/">Dashboard</a>
                             </li>
                         <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link text-danger" href="auth/logout.php">Sign Out</a>
+                        <a class="nav-link text-danger" href="/auth/logout.php">Sign Out</a>
                     </li>
                 <?php else: ?>
-                    <li class="nav-item"><a class="nav-link" href="register.php">Register</a></li>
-                    <li class="nav-item"><a class="nav-link" href="signin.php">Sign In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/register.php">Register</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/signin.php">Sign In</a></li>
                 <?php endif; ?>
                 </ul>
             </div>

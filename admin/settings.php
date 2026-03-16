@@ -34,10 +34,9 @@ $currentThreshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniClothes — Admin Settings</title>
+    <title>UniClothes — Settings</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
 
@@ -45,11 +44,11 @@ $currentThreshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
 
 <div class="main-content">
     <div class="topbar">
-        <h2>System Settings (Session Mode)</h2>
+        <h2>Settings</h2>
     </div>
 
     <div class="page-body">
-        
+
         <?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
                 <strong>Oops!</strong> <?php echo htmlspecialchars($_SESSION['error']); ?>
@@ -65,22 +64,33 @@ $currentThreshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
             </div>
             <?php unset($_SESSION['success']); ?>
         <?php endif; ?>
-        <div class="card shadow-sm border-0 mt-3" style="max-width: 600px;">
+
+        <div class="card shadow-sm border-0 mt-3 settings-card">
             <div class="card-body p-4">
-                <h4 class="card-title fw-bold mb-4" style="font-family: 'Bebas Neue', cursive; letter-spacing: 1px;">Inventory Rules</h4>
+                <h4 class="card-title fw-bold mb-4 settings-card-title">Inventory Rules</h4>
                 
-                <div class="alert alert-warning small">
+                <div class="alert alert-warning small mb-4">
                     <strong>Note:</strong> Settings are currently running in temporary session mode. Changes will reset when you log out.
                 </div>
 
                 <form action="settings.php" method="POST">
                     <div class="mb-4">
                         <label for="low_stock" class="form-label fw-bold">Low Stock Threshold</label>
-                        <p class="text-muted small mb-3">Products with inventory below this number will be flagged as <span class="badge bg-danger">Low Stock</span>.</p>
+                        <p class="text-muted small mb-3">
+                            Products with inventory below this number will be flagged as 
+                            <span class="badge bg-danger">Low Stock</span>.
+                        </p>
                         
-                        <div class="input-group" style="max-width: 200px;">
-                            <input type="number" class="form-control" id="low_stock" name="low_stock" 
-                                   value="<?php echo htmlspecialchars($currentThreshold); ?>" min="1" required>
+                        <div class="input-group" style="max-width: 220px;">
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="low_stock"
+                                name="low_stock"
+                                value="<?php echo htmlspecialchars($currentThreshold); ?>"
+                                min="1"
+                                required
+                            >
                             <span class="input-group-text">items</span>
                         </div>
                     </div>
