@@ -2,7 +2,7 @@
 require_once __DIR__ . '/config/paths.php';
 require_once ROOT . '/config/db_connect.php';
 
-$user_search = isset($_GET['query']) ? trim($_GET['query']) : '';
+$user_search = isset($_GET['query']) ? htmlspecialchars(trim($_GET['query']), ENT_QUOTES, 'UTF-8') : '';
 $products = [];
 
 if ($user_search !== '') {

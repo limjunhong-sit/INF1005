@@ -1,4 +1,8 @@
-<?php require_once __DIR__ . '/config/paths.php'; ?>
+<?php
+session_start();
+require_once __DIR__ . '/config/paths.php';
+require_once __DIR__ . '/includes/csrf.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
     <?php include ROOT . '/includes/head.php'; ?>
@@ -10,6 +14,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <form action="auth/process_register.php" method="POST" class="border rounded p-4 bg-light">
+                            <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
                             <div class="mb-3">
                                 <label for="fname" class="form-label">First Name</label>
                                 <input type="text" class="form-control" id="fname" name="fname" required>

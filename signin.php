@@ -1,4 +1,8 @@
-<?php require_once __DIR__ . '/config/paths.php'; ?>
+<?php
+session_start();
+require_once __DIR__ . '/config/paths.php';
+require_once __DIR__ . '/includes/csrf.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
     <?php include ROOT . '/includes/head.php'; ?>
@@ -10,6 +14,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <form action="auth/process_signin.php" method="POST" class="border rounded p-4 bg-light shadow-sm">
+                            <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" autofocus required>

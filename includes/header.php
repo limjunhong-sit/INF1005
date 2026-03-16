@@ -1,4 +1,8 @@
-<?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
+<?php
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header("X-XSS-Protection: 1; mode=block"); 
+if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 <header class="sticky-top">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">

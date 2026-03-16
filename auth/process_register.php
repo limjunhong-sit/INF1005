@@ -1,8 +1,18 @@
-<?php 
+<?php
+session_start();
+require_once __DIR__ . '/../includes/csrf.php';
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../register.php');
     exit;
 }
+
+if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+    die("Invalid request.");
+}
+
+$success = true;
+$errorMsg = "";
 
 $success = true;
 $errorMsg = "";
@@ -50,7 +60,8 @@ if (empty($fname) || empty($lname) || empty($email) || empty($pwd) || empty($pwd
         if ($e->getCode() == 23000) {
             $errorMsg = "This email is already registered.";
         } else {
-            $errorMsg = "Database error: " . $e->getMessage();
+            $errorMsg = "An unexpected error occurred. Please try again later.";
+            error_log("Database error: " . $e->getMessage()); // Log the error instead of showing it to the user
         }
         $success = false;
     }
