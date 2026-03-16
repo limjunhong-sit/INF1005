@@ -8,7 +8,28 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
     <body>
         <?php include ROOT . '/includes/header.php'; ?>
         <main>
-            <div class="text-center py-4 bg-light border-bottom">
+            <section id="home" class="position-relative mb-5" style="margin: 0;">     
+                <h2 class="visually-hidden">Home</h2>   
+                <img src="image/3_models.png" alt="UniClothes models" class="fade-in img-fluid w-100" style="max-height: 70vh; object-fit: cover; object-position: top;">
+                
+                <div class="text-center py-5 px-3">
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <h2 class="mb-3" style="font-family: 'Bebas Neue', cursive; font-size: 3rem; letter-spacing: 2px;">
+                            WELCOME BACK, <?php echo strtoupper(htmlspecialchars($_SESSION['first_name'])); ?>.
+                        </h2>
+                        <p style="font-family: 'Italiana', serif; font-size: 1.3rem;" class="text-muted mb-0">
+                            Ready for some fresh campus style?
+                        </p>
+                    <?php else: ?>
+                        <h2 class="mb-3" style="font-family: 'Italiana', serif; font-size: 3.5rem;">Welcome to UniClothes</h2>
+                        <p style="font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 1px;" class="mb-0">
+                            Style your campus life with modern fashion made for students.
+                        </p>
+                    <?php endif; ?>
+                </div>
+            </section>
+        
+            <!--<div class="text-center py-4 bg-light border-bottom">
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <h2 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 2px;">
                         WELCOME BACK, <?php echo strtoupper(htmlspecialchars($_SESSION['first_name'])); ?>!
@@ -17,7 +38,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                         Ready for some fresh campus style?
                     </p>
                 <?php else: ?>
-                    <h2 style="font-family: 'Italiana', serif; font-size: 2rem;">Welcome to UniClothes</h2>
+                    <h2 style="font-family: 'Italiana', serif; font-size: 3rem;">Welcome to UniClothes</h2>
                 <?php endif; ?>
             </div>
 
@@ -29,9 +50,9 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
             <div class="text-center py-4">
                 <p style="font-family: 'Bebas Neue', serif; font-size: 1.2rem; color: #555;">
                     Style your campus life with UniClothes — modern fashion made for students.</p>
-            </div>
+            </div>-->
 
-            <section class="container text-center my-5">
+            <!--<section class="container text-center my-5">
                 <h2 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem; margin-bottom: 1rem;">Shop by Category</h2>
                 <div class="row g-3 mt-2">
                     <div class="col-md-6">
@@ -41,7 +62,26 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                         <a href="WomenDresses.php" class="btn btn-outline-dark w-100 py-4 fs-5">Women's Collection</a>
                     </div>
                 </div>
+            </section>-->
+
+            <section class="container text-center my-5 py-5 border-top fade-in">
+                <h2 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem; margin-bottom: 2rem; letter-spacing: 1px;">Trending on Campus</h2>
+                <div class="row row-cols-2 row-cols-md-4 g-4">
+                    <div class="col">
+                        <div class="bg-light" style="height: 300px; display: flex; align-items: center; justify-content: center; color: #aaa;">Product Placeholder</div>
+                    </div>
+                    <div class="col">
+                        <div class="bg-light" style="height: 300px; display: flex; align-items: center; justify-content: center; color: #aaa;">Product Placeholder</div>
+                    </div>
+                    <div class="col">
+                        <div class="bg-light" style="height: 300px; display: flex; align-items: center; justify-content: center; color: #aaa;">Product Placeholder</div>
+                    </div>
+                    <div class="col">
+                        <div class="bg-light" style="height: 300px; display: flex; align-items: center; justify-content: center; color: #aaa;">Product Placeholder</div>
+                    </div>
+                </div>
             </section>
+
         </main>
         <?php include ROOT . '/includes/footer.php'; ?>               
         <script>
@@ -53,23 +93,6 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                 });
             });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-        </script>
-
-        <script>
-            const toggle = document.getElementById('darkToggle');
-            const body = document.body;
-
-            if (localStorage.getItem('darkMode') === 'true') {
-                body.classList.add('dark-mode');
-                toggle.textContent = '☀️';
-            }
-
-            toggle.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                const isDark = body.classList.contains('dark-mode');
-                toggle.textContent = isDark ? '☀️' : '🌙';
-                localStorage.setItem('darkMode', isDark);
-            });
         </script>
 
     </body>

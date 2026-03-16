@@ -24,22 +24,6 @@ $sql = "SELECT p.*, c.name as cat_name, c.department
         ORDER BY p.product_id DESC";
 $stmt = $pdo->query($sql);
 $products = $stmt->fetchAll();
-
-// Fetch categories once for dropdowns and JS mapping
-$catSql = "SELECT department, name FROM categories ORDER BY department, name";
-$catStmt = $pdo->query($catSql);
-$categoryRows = $catStmt->fetchAll();
-
-$categoryMap = [];
-$departments = [];
-foreach ($categoryRows as $row) {
-    $dept = $row['department'];
-    $name = $row['name'];
-    $categoryMap[$dept][] = $name;
-    if (!in_array($dept, $departments, true)) {
-        $departments[] = $dept;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -62,19 +46,7 @@ foreach ($categoryRows as $row) {
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
     </div>
 
-        <div class="page-body">
-            <?php 
-            // Flash message from admin/process.php
-            $flash = $_SESSION['admin_flash'] ?? null;
-            if ($flash) {
-                unset($_SESSION['admin_flash']);
-                $alertClass = $flash['type'] === 'success' ? 'alert-success' : 'alert-danger';
-            ?>
-                <div class="alert <?php echo $alertClass; ?> alert-dismissible fade show shadow-sm" role="alert">
-                    <?php echo htmlspecialchars($flash['message']); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php } ?>
+    <div class="page-body">
         <div class="stats-row">
             <div class="stat-card">
                 <div class="stat-label">Total Products</div>
@@ -99,15 +71,16 @@ foreach ($categoryRows as $row) {
             
             <select id="deptFilter" class="filter-select">
                 <option value="">All Departments</option>
-                <?php foreach ($departments as $dept): ?>
-                    <option value="<?php echo htmlspecialchars($dept); ?>">
-                        <?php echo htmlspecialchars($dept); ?>
-                    </option>
-                <?php endforeach; ?>
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
             </select>
             
             <select id="catFilter" class="filter-select">
                 <option value="">All Categories</option>
+                <option value="T-Shirts">T-Shirts</option>
+                <option value="Hoodies">Hoodies</option>
+                <option value="Dresses">Dresses</option>
+                <option value="Tops">Tops</option>
             </select>
         </div>
 
@@ -128,7 +101,12 @@ foreach ($categoryRows as $row) {
                     <tr>
                         <td>
                             <div class="product-cell">
-                                <img src="<?php echo htmlspecialchars($p['image_url']); ?>" width="30" height="30" class="rounded me-2">
+                                <?php 
+                                    $img = $p['image_url'];
+                                    if (strpos($img, 'http') !== 0 && strpos($img, '../') !== 0) {
+                                        $img = '../' . $img; 
+                                    }?>
+                                <img src="<?php echo htmlspecialchars($img); ?>" width="30" height="30" class="rounded me-2" style="object-fit: cover;">
                                 <span class="product-name"><?php echo htmlspecialchars($p['name']); ?></span>
                             </div>
                         </td>
@@ -171,10 +149,9 @@ foreach ($categoryRows as $row) {
             <button class="modal-close" onclick="closeModal('productModal')">✕</button>
         </div>
         
-        <form action="process.php" method="POST" enctype="multipart/form-data">
+        <form action="admin_process.php" method="POST">
             <input type="hidden" name="action" value="save">
             <input type="hidden" name="product_id" id="productId">
-            <input type="hidden" name="existing_image" id="existingImage">
 
             <div class="modal-body">
                 <div class="form-group">
@@ -211,9 +188,8 @@ foreach ($categoryRows as $row) {
                 </div>
                 
                 <div class="form-group">
-                    <label>Product Image</label>
-                    <input type="file" name="image_file" id="productImage" accept="image/*">
-                    <small class="text-muted d-block mt-1" id="currentImageInfo"></small>
+                    <label>Image URL</label>
+                    <input type="text" name="image" id="productImage" placeholder="https://example.com/image.jpg" required>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
@@ -235,7 +211,7 @@ foreach ($categoryRows as $row) {
         <h3>Delete Product</h3>
         <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?<br>This action cannot be undone.</p>
         
-        <form action="process.php" method="POST">
+        <form action="admin_process.php" method="POST">
             <input type="hidden" name="action" value="delete">
             <input type="hidden" name="product_id" id="deleteProductId">
             
@@ -247,10 +223,6 @@ foreach ($categoryRows as $row) {
     </div>
 </div>
 
-<script>
-    // Expose category mapping for admin.js
-    window.categoryMap = <?php echo json_encode($categoryMap, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
-</script>
 <script src="../js/admin.js"></script>
 </body>
 </html>

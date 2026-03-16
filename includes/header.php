@@ -1,6 +1,6 @@
 <?php if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="index.php">
                 <img src="image/ecommerce_logo.png" alt="" width="40" height="30" class="rounded-circle">UniClothes
@@ -15,31 +15,31 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="menDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Men</a>
                         <ul class="dropdown-menu" aria-labelledby="menDropdown">
-                            <li><a class="dropdown-item" href="MenTshirt.php?category=T-Shirts">T-Shirts</a></li>
-                            <li><a class="dropdown-item" href="MenTshirt.php?category=Shirts">Shirts</a></li>
-                            <li><a class="dropdown-item" href="MenTshirt.php?category=Hoodies">Hoodies</a></li>
-                            <li><a class="dropdown-item" href="MenTshirt.php?category=Jackets">Jackets</a></li>
-                            <li><a class="dropdown-item" href="MenTshirt.php?category=Pants">Pants</a></li>
-                            <li><a class="dropdown-item" href="MenTshirt.php?category=Accessories">Accessories</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Men">All Men's</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=T-Shirts">T-Shirts</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=Hoodies">Hoodies</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=Jackets">Jackets</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=Pants">Pants</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Men&cat=Accessories">Accessories</a></li>
+
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="womenDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Women</a>
                         <ul class="dropdown-menu" aria-labelledby="womenDropdown">
-                            <li><a class="dropdown-item" href="WomenTop.php?category=Tops">Tops</a></li>
-                            <li><a class="dropdown-item" href="WomenTop.php?category=Dresses">Dresses</a></li>
-                            <li><a class="dropdown-item" href="WomenTop.php?category=Hoodies">Hoodies</a></li>
-                            <li><a class="dropdown-item" href="WomenTop.php?category=Jackets">Jackets</a></li>
-                            <li><a class="dropdown-item" href="WomenTop.php?category=Skirts">Skirts</a></li>
-                            <li><a class="dropdown-item" href="WomenTop.php?category=Accessories">Accessories</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Women">All Women's</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Tops">Tops</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Dresses">Dresses</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Jackets">Jackets</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Skirts">Skirts</a></li>
+                            <li><a class="dropdown-item" href="shop.php?dept=Women&cat=Accessories">Accessories</a></li>
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
                 </ul>
-
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <button class="dark-toggle nav-link" id="darkToggle" title="Toggle dark mode">🌙</button>
+                        <button id="themeToggle" class="btn nav-link" title="Toggle Dark Mode">🌓</button>
                     </li>
                     <li class="nav-item">
                         <button class="btn nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">🔍</button>
@@ -75,4 +75,21 @@
             </form>
         </div>
     </div>
+    <script>
+        const themeBtn = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            
+            if (document.body.classList.contains('dark-theme')) {
+                localStorage.setItem('theme', 'dark'); 
+            } else {
+                localStorage.setItem('theme', 'light'); 
+            }
+        });
+    </script>
 </header>

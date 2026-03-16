@@ -32,7 +32,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php include ROOT . '/includes/head.php'; ?>
     <body>
-        <?php include 'header.php'; ?>
+        <?php include ROOT . '/includes/header.php'; ?>
         
         <main class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-4">

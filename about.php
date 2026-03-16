@@ -91,7 +91,7 @@
                     <div class="contact-card fade-in-el">
                         <div class="contact-icon">📞</div>
                         <div class="contact-title">Call Us</div>
-                        <p class="contact-body">For customer support, please call us at +65345786</p>
+                        <p class="contact-body">For customer support, please call us at +6534578692</p>
                 </div>
             </section>
 
