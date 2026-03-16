@@ -42,11 +42,7 @@ function closeModal(id) {
     document.getElementById(id).classList.remove('show');
 }
 
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', function (e) {
-        if (e.target === this) closeModal(this.id);
-    });
-});
+// Do not close modals when clicking the overlay; only explicit buttons should close.
 
 document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById('searchInput');

@@ -68,15 +68,21 @@ if ($action === 'save') {
     $price = filter_var($_POST['price'] ?? 0, FILTER_VALIDATE_FLOAT);
     $stock = filter_var($_POST['stock'] ?? 0, FILTER_VALIDATE_INT);
 
-    // 3. Final Verification: Stop the script if validation failed
+    // 3. Final Verification: If validation failed, redirect back with error instead of showing a blank page
     if (empty($name) || empty($desc) || empty($img)) {
-        die("Error: Name, description, and image cannot be empty.");
+        $_SESSION['admin_error'] = "Name, description, and image cannot be empty.";
+        header("Location: index.php");
+        exit();
     }
     if ($price === false || $price < 0) {
-        die("Error: Price must be a valid positive number.");
+        $_SESSION['admin_error'] = "Price must be a valid positive number.";
+        header("Location: index.php");
+        exit();
     }
     if ($stock === false || $stock < 0) {
-        die("Error: Stock must be a valid whole number (0 or higher).");
+        $_SESSION['admin_error'] = "Stock must be a valid whole number (0 or higher).";
+        header("Location: index.php");
+        exit();
     }
 
     // 1. Execute the search for the Category ID
@@ -84,9 +90,11 @@ if ($action === 'save') {
     $cStmt->execute([$dept, $cat]);
     $catId = $cStmt->fetchColumn();
 
-    // 2. Safety check: If someone messed with the HTML dropdowns, stop the script
+    // 2. Safety check: If someone messed with the HTML dropdowns, redirect with error
     if (!$catId) {
-        die("Error: Invalid Department and Category combination. Please check your spelling.");
+        $_SESSION['admin_error'] = "Invalid Department and Category combination. Please check your selection.";
+        header("Location: index.php");
+        exit();
     }
 
     try {
@@ -105,7 +113,9 @@ if ($action === 'save') {
         }
     } catch (PDOException $e) {
         // Catch any database crashes (like if a string is too long for a column)
-        die("Database Error: " . $e->getMessage());
+        $_SESSION['admin_error'] = "Database Error: " . $e->getMessage();
+        header("Location: index.php");
+        exit();
     }
 }
 
