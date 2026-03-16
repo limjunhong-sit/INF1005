@@ -18,6 +18,19 @@ div.swatch {
 div.swatch:hover { transform: scale(1.2) !important; }
 div.swatch.active { border-color: #111 !important; transform: scale(1.12) !important; }
 
+body.dark-theme div.swatch {
+    border-color: var(--cream, #27272a) !important; 
+    box-shadow: 0 0 0 1px #555555 !important;
+}
+
+body.dark-theme div.swatch:hover {
+    box-shadow: 0 0 0 2px #888888 !important;
+}
+
+body.dark-theme div.swatch.active {
+    box-shadow: 0 0 0 2px var(--charcoal, #f4f4f5) !important; 
+}
+
 .swatches {
     display: flex !important;
     gap: 8px !important;

@@ -101,7 +101,12 @@ $products = $stmt->fetchAll();
                     <tr>
                         <td>
                             <div class="product-cell">
-                                <img src="<?php echo htmlspecialchars($p['image_url']); ?>" width="30" height="30" class="rounded me-2">
+                                <?php 
+                                    $img = $p['image_url'];
+                                    if (strpos($img, 'http') !== 0 && strpos($img, '../') !== 0) {
+                                        $img = '../' . $img; 
+                                    }?>
+                                <img src="<?php echo htmlspecialchars($img); ?>" width="30" height="30" class="rounded me-2" style="object-fit: cover;">
                                 <span class="product-name"><?php echo htmlspecialchars($p['name']); ?></span>
                             </div>
                         </td>
@@ -218,6 +223,6 @@ $products = $stmt->fetchAll();
     </div>
 </div>
 
-<script src="js/admin.js"></script>
+<script src="../js/admin.js"></script>
 </body>
 </html>
