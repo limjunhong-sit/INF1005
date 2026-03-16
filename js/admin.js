@@ -6,9 +6,6 @@ function openAddModal() {
     document.getElementById('productPrice').value = '';
     document.getElementById('productStock').value = '';
     document.getElementById('productImage').value = '';
-    document.getElementById('existingImage').value = '';
-    const info = document.getElementById('currentImageInfo');
-    if (info) info.textContent = '';
     document.getElementById('productDesc').value = '';
     document.getElementById('productDept').value = '';
     // Lock the category dropdown until a department is chosen
@@ -25,12 +22,7 @@ function openEditModal(id, name, price, dept, category, stock, desc, img) {
     document.getElementById('productStock').value = stock;
     document.getElementById('productDesc').value = desc;
     document.getElementById('productDept').value = dept;
-    document.getElementById('productImage').value = ''; // file inputs cannot be pre-filled
-    document.getElementById('existingImage').value = img;
-    const info = document.getElementById('currentImageInfo');
-    if (info) {
-        info.textContent = img ? 'Current image: ' + img : 'No image uploaded yet.';
-    }
+    document.getElementById('productImage').value = img;
     populateCategories(dept, category);
     document.getElementById('productModal').classList.add('show');
 }
@@ -84,8 +76,12 @@ document.addEventListener("DOMContentLoaded", function() {
     if(catFilter) catFilter.addEventListener('change', filterTable);
 });
 
-// 1. Define which categories belong to which department (injected from PHP)
-const categoryMap = window.categoryMap || {};
+// 1. Define which categories belong to which department
+// Prefer server-provided map if available, fallback to defaults
+const categoryMap = window.categoryMap || {
+    'Men': ['T-Shirts', 'Hoodies'],
+    'Women': ['Dresses', 'Tops']
+};
 
 const deptSelect = document.getElementById('productDept');
 const catSelect = document.getElementById('productCategory');
