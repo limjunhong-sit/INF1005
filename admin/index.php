@@ -36,6 +36,14 @@ while ($row = $catStmt->fetch(PDO::FETCH_ASSOC)) {
     }
     $categoriesByDept[$dept][] = $row['name'];
 }
+
+// Enforce desired order/allowed categories for Women in the admin UI
+$womenOrder = ['Tops', 'Dresses', 'Jackets', 'Skirts', 'Accessories'];
+if (!empty($categoriesByDept['Women'])) {
+    $categoriesByDept['Women'] = array_values(
+        array_intersect($womenOrder, $categoriesByDept['Women'])
+    );
+}
 ?>
 
 <!DOCTYPE html>
@@ -170,7 +178,6 @@ while ($row = $catStmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="modal-box">
         <div class="modal-header">
             <h3 id="modalTitle">Add Product</h3>
-            <button class="modal-close" onclick="closeModal('productModal')">✕</button>
         </div>
         
         <form action="process.php" method="POST" enctype="multipart/form-data">
