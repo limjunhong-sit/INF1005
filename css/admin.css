@@ -697,3 +697,32 @@ td {
     background: var(--border);
     border-radius: 3px;
 }
+
+body.dark-theme {
+    --bg: #18181b;       
+    --surface: #27272a;  
+    --surface2: #3f3f46; 
+    --border: #52525b;   
+    
+    --accent: #d4a373;   
+    --accent-dim: rgba(212, 163, 115, 0.15);
+
+    --text: #f4f4f5;     
+    --text-muted: #a1a1aa; 
+    
+    --danger: #ef4444;
+    --danger-dim: rgba(239, 68, 68, 0.15);
+    --success: #22c55e;
+}
+
+body.dark-theme .badge-men {
+    background: rgba(122, 171, 255, 0.15);
+    color: #9ac2ff;
+    border-color: rgba(122, 171, 255, 0.3);
+}
+
+body.dark-theme .badge-women {
+    background: rgba(255, 142, 197, 0.15);
+    color: #ffb6d9;
+    border-color: rgba(255, 142, 197, 0.3);
+}

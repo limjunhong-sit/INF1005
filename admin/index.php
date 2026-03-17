@@ -12,8 +12,9 @@ $totalProducts = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
 $menItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Men'")->fetchColumn();
 $womenItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Women'")->fetchColumn();
 
-// Read the threshold from the session, or default to 5 (temporary until database has settings table)
-$threshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
+$settingStmt = $pdo->query("SELECT setting_value FROM settings WHERE setting_key = 'low_stock_threshold'");
+$threshold = $settingStmt->fetchColumn();
+if ($threshold === false) $threshold = 5; 
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM products WHERE stock_quantity < ?");
 $stmt->execute([$threshold]);
 $lowStock = $stmt->fetchColumn();

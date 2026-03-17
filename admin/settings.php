@@ -1,34 +1,37 @@
 <?php
 require_once __DIR__ . '/../config/paths.php';
-// 1. Security & Session Check
+require_once ROOT . '/config/db_connect.php';
+
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../signin.php");
     exit();
 }
 
-// 2. Handle Form Submission (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitize and validate the input
     $newThreshold = filter_var($_POST['low_stock'] ?? 0, FILTER_VALIDATE_INT);
 
     if ($newThreshold === false || $newThreshold < 1) {
         $_SESSION['error'] = "The threshold must be a valid number of 1 or higher.";
     } else {
-        // TEMP FIX: Store the setting in the session instead of the database
-        $_SESSION['temp_low_stock_threshold'] = $newThreshold;
-        $_SESSION['success'] = "Inventory threshold temporarily updated to " . $newThreshold . "!";
+       $sql = "INSERT INTO settings (setting_key, setting_value) 
+                VALUES ('low_stock_threshold', ?) 
+                ON DUPLICATE KEY UPDATE setting_value = ?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$newThreshold, $newThreshold]);
+        $_SESSION['success'] = "Inventory threshold permanently updated to " . $newThreshold . "!";
     }
-    
-    // Redirect to prevent form resubmission
     header("Location: settings.php");
     exit();
 }
 
-// 3. Fetch current setting for the form display
-// TEMP FIX: Read from session, default to 5 if it hasn't been set yet
-$currentThreshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
+$stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = 'low_stock_threshold'");
+$stmt->execute();
+$dbThreshold = $stmt->fetchColumn();
+
+$currentThreshold = ($dbThreshold !== false) ? (int)$dbThreshold : 5;
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,10 +71,6 @@ $currentThreshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
         <div class="card shadow-sm border-0 mt-3 settings-card">
             <div class="card-body p-4">
                 <h4 class="card-title fw-bold mb-4 settings-card-title">Inventory Rules</h4>
-                
-                <div class="alert alert-warning small mb-4">
-                    <strong>Note:</strong> Settings are currently running in temporary session mode. Changes will reset when you log out.
-                </div>
 
                 <form action="settings.php" method="POST">
                     <div class="mb-4">
@@ -98,7 +97,7 @@ $currentThreshold = $_SESSION['temp_low_stock_threshold'] ?? 5;
                     <hr class="my-4 text-muted">
                     
                     <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-dark px-4">Save Temporary Changes</button>
+                        <button type="submit" class="btn btn-dark px-4">Save Changes</button>
                     </div>
                 </form>
             </div>

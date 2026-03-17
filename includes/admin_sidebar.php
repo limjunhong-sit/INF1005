@@ -23,6 +23,9 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         <a href="settings.php" class="nav-link-item <?php echo ($currentPage === 'settings.php') ? 'active' : ''; ?>">
             <span class="icon">⚙️</span> Settings
         </a>
+        <a href="#" id="adminThemeToggle" class="nav-link-item" style="margin-top: 15px;">
+            <span class="icon">🌓</span> Dark Mode
+        </a>
         <a href="../auth/logout.php" class="nav-link-item">
             <span class="icon">🚪</span> Logout
         </a>
@@ -37,3 +40,24 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         </div>
     </div>
 </aside>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeBtn = document.getElementById('adminThemeToggle');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+
+        themeBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            document.body.classList.toggle('dark-theme');
+            if (document.body.classList.contains('dark-theme')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    });
+</script>
