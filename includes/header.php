@@ -50,7 +50,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
                     </li>
                     <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="/cart.php">Cart</a>
+                            <a class="nav-link" href="/cart/cart.php">Cart</a>
                         </li>
                     <?php endif; ?>
 

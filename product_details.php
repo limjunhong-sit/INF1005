@@ -51,7 +51,11 @@ if (!$product) {
 
                 <?php include ROOT . '/includes/color.php'; ?>
 
-                <button class="btn btn-dark btn-lg px-5 w-100 w-md-auto">Add to Cart</button>
+                <form action="/cart/add_to_cart.php" method="POST">
+                    <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
+                    <button type="submit" class="btn btn-dark btn-lg px-5 w-100 w-md-auto">Add to Cart
+                    </button>
+                </form>
             </div>
         </div>
     </main>

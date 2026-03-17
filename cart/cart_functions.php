@@ -1,0 +1,64 @@
+<?php
+require_once __DIR__ . '/../config/paths.php';
+require_once ROOT . '/config/db_connect.php'; 
+
+function getActiveCartId(PDO $pdo, int $userId): int {
+    $stmt = $pdo->prepare("SELECT cart_id FROM cart WHERE user_id = ? LIMIT 1");
+    $stmt->execute([$userId]);
+    $cart = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($cart) {
+        return (int)$cart['cart_id'];
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO cart (user_id, created_at) VALUES (?, NOW())");
+    $stmt->execute([$userId]);
+
+    return (int)$pdo->lastInsertId();
+}
+
+function addToCart(PDO $pdo, int $userId, int $productId, int $quantity = 1): void {
+    $cartId = getActiveCartId($pdo, $userId);
+
+    $stmt = $pdo->prepare("SELECT item_id, quantity FROM cart_items WHERE cart_id = ? AND product_id = ? LIMIT 1");
+    $stmt->execute([$cartId, $productId]);
+    $item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($item) {
+        $stmt = $pdo->prepare("UPDATE cart_items SET quantity = quantity + ? WHERE item_id = ?");
+        $stmt->execute([$quantity, $item['item_id']]);
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO cart_items (cart_id, product_id, quantity, added_at) VALUES (?, ?, ?, NOW())");
+        $stmt->execute([$cartId, $productId, $quantity]);
+    }
+}
+
+function getCartItems(PDO $pdo, int $userId): array {
+    $stmt = $pdo->prepare("
+        SELECT
+            ci.item_id,
+            ci.product_id,
+            ci.quantity,
+            p.name,
+            p.description,
+            p.price,
+            p.image_url
+        FROM cart c
+        JOIN cart_items ci ON c.cart_id = ci.cart_id
+        JOIN products p ON ci.product_id = p.product_id
+        WHERE c.user_id = ?
+        ORDER BY ci.added_at DESC
+    ");
+    $stmt->execute([$userId]);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getCartTotal(array $items): float {
+    $total = 0;
+    foreach ($items as $item) {
+        $total += $item['price'] * $item['quantity'];
+    }
+    return $total;
+}
+?>
