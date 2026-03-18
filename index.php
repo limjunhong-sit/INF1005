@@ -94,6 +94,12 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
             });
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
         </script>
-
+        <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+        <df-messenger
+        intent="WELCOME"
+        chat-title="Uniclothes Assistant"
+        agent-id="f97d8394-61ce-4cc9-a629-92e972c50010"
+        language-code="en"
+        ></df-messenger>
     </body>
 </html>
