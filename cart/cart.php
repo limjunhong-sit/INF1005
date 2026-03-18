@@ -72,7 +72,7 @@ $total = getCartTotal($items);
                         <span>Total</span>
                         <span>$<?php echo number_format($total, 2); ?></span>
                     </div>
-                    <a href="checkout.php" class="checkout-btn">Proceed to Checkout</a>
+                    <a href="/payment/checkout.php" class="checkout-btn">Proceed to Checkout</a>
                 </div>
                 <a href="/index.php" class="shop-btn" style="display:block; text-align:center; margin-top:14px;">
                     Continue Shopping
