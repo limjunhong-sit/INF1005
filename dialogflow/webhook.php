@@ -58,22 +58,23 @@ try {
         ]);
     }
 
-    $sql = "
-        SELECT product_id, name, description, price, stock_quantity
-        FROM products
-        WHERE stock_quantity > 0
-    ";
-
     $bindings = [];
     $conditions = [];
-
     foreach ($keywords as $index => $keyword) {
-        $conditions[] = "(name LIKE :kw{$index} OR description LIKE :kw{$index})";
+        $conditions[] = "(p.name LIKE :kw{$index} OR p.description LIKE :kw{$index})";
         $bindings[":kw{$index}"] = '%' . $keyword . '%';
     }
 
-    $sql .= " AND (" . implode(" OR ", $conditions) . ")";
-    $sql .= " ORDER BY product_id DESC LIMIT 3";
+    $sql = "
+        SELECT p.product_id, p.name, p.description, p.price,
+               COALESCE(SUM(pv.stock_quantity), 0) AS total_stock
+        FROM products p
+        LEFT JOIN product_variants pv ON p.product_id = pv.product_id
+        WHERE (" . implode(" OR ", $conditions) . ")
+        GROUP BY p.product_id, p.name, p.description, p.price
+        HAVING total_stock > 0
+        ORDER BY p.product_id DESC LIMIT 3
+    ";
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute($bindings);

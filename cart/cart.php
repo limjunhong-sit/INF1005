@@ -88,12 +88,17 @@ $total = getCartTotal($items);
                                         <p class="contact-body mb-2" style="font-size: 0.85rem;">
                                             <?php echo htmlspecialchars($item['description']); ?>
                                         </p>
+                                        <?php
+                                        $variantParts = array_filter([$item['size'] ?? null, $item['colour'] ?? null]);
+                                        if (!empty($variantParts)): ?>
+                                            <p class="text-muted small mb-1"><?php echo htmlspecialchars(implode(' / ', $variantParts)); ?></p>
+                                        <?php endif; ?>
                                         <p class="stat-number" style="font-size: 1.3rem;">$<?php echo number_format($item['price'], 2); ?></p>
                                         
                                         <div class="d-flex align-items-center gap-3 mt-3">
                                             <form action="update_cart.php" method="POST" class="d-flex gap-2">
                                                 <input type="hidden" name="item_id" value="<?php echo $item['item_id']; ?>">
-                                                <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" min="1" 
+                                                <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" min="1" max="<?php echo (int)($item['variant_stock'] ?? 999); ?>"
                                                        class="form-control form-control-sm" style="width: 60px; background: var(--warm-white); color: var(--charcoal); border: 1px solid var(--border);">
                                                 <button type="submit" class="btn btn-sm btn-outline-dark">Update</button>
                                             </form>

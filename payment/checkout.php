@@ -12,18 +12,22 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = (int)$_SESSION['user_id'];
 
-// Get cart items
+// Get cart items (with variant info for display)
 $stmt = $pdo->prepare("
     SELECT
         ci.item_id,
         ci.product_id,
+        ci.variant_id,
         ci.quantity,
         p.name,
         p.description,
         p.price,
-        p.image_url
+        p.image_url,
+        pv.size,
+        pv.colour
     FROM cart c
     JOIN cart_items ci ON c.cart_id = ci.cart_id
+    JOIN product_variants pv ON ci.variant_id = pv.variant_id
     JOIN products p ON ci.product_id = p.product_id
     WHERE c.user_id = ?
     ORDER BY ci.added_at DESC
@@ -126,6 +130,11 @@ foreach ($items as $item) {
                                 
                                 <div class="flex-grow-1">
                                     <h2 class="contact-title mb-1" style="font-size: 1.2rem;"><?= htmlspecialchars($item['name']) ?></h2>
+                                    <?php
+                                    $variantParts = array_filter([$item['size'] ?? null, $item['colour'] ?? null]);
+                                    if (!empty($variantParts)): ?>
+                                        <p class="text-muted small mb-0"><?= htmlspecialchars(implode(' / ', $variantParts)) ?></p>
+                                    <?php endif; ?>
                                     <p class="contact-body mb-0" style="font-size: 0.9rem;">
                                         $<?= number_format($item['price'], 2) ?> &times; <?= $item['quantity'] ?>
                                     </p>

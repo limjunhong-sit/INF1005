@@ -38,9 +38,9 @@ if (!empty($paymentId)) {
                 'amount' => $payment['amount']
             ];
 
-            // Update product stock
+            // Update variant stock
             $stmt = $pdo->prepare("
-                SELECT oi.product_id, oi.quantity
+                SELECT oi.variant_id, oi.quantity
                 FROM order_items oi
                 WHERE oi.order_id = ?
             ");
@@ -48,8 +48,8 @@ if (!empty($paymentId)) {
             $orderItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($orderItems as $item) {
-                $stmt = $pdo->prepare("UPDATE products SET stock_quantity = stock_quantity - ? WHERE product_id = ? AND stock_quantity >= ?");
-                $stmt->execute([$item['quantity'], $item['product_id'], $item['quantity']]);
+                $stmt = $pdo->prepare("UPDATE product_variants SET stock_quantity = stock_quantity - ? WHERE variant_id = ? AND stock_quantity >= ?");
+                $stmt->execute([$item['quantity'], $item['variant_id'], $item['quantity']]);
             }
         }
 

@@ -2,6 +2,7 @@
 session_start();
 require_once __DIR__ . '/config/paths.php';
 require_once __DIR__ . '/includes/csrf.php';
+$redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect'], ENT_QUOTES, 'UTF-8') : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +16,7 @@ require_once __DIR__ . '/includes/csrf.php';
                     <div class="col-md-6">
                         <form action="auth/process_signin.php" method="POST" class="border rounded p-4 bg-light shadow-sm">
                             <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
+                            <?php if ($redirect): ?><input type="hidden" name="redirect" value="<?= $redirect ?>"><?php endif; ?>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" autofocus required>

@@ -44,7 +44,9 @@ if (empty($email) || empty($pwd)) {
             $_SESSION['role'] = $user['role'];
 
             if ($_SESSION['role'] === 'admin') {
-                header('Location: ../admin/analytics.php'); 
+                header('Location: ../admin/analytics.php');
+            } elseif (!empty($_POST['redirect']) && strpos($_POST['redirect'], '/') === 0) {
+                header('Location: ../' . ltrim($_POST['redirect'], '/'));
             } else {
                 header('Location: ../index.php');
             }

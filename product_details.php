@@ -2,7 +2,11 @@
 require_once __DIR__ . '/config/paths.php';
 require_once ROOT . '/config/db_connect.php';
 
-$product_id = isset($_GET['id']) ? $_GET['id'] : header("Location: index.php");
+$product_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if (!$product_id) {
+    header("Location: index.php");
+    exit;
+}
 
 $stmt = $pdo->prepare("SELECT * FROM products WHERE product_id = ?");
 $stmt->execute([$product_id]);
@@ -11,6 +15,21 @@ $product = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$product) {
     die("Product not found.");
 }
+
+// Fetch variants for this product
+$stmt = $pdo->prepare("SELECT * FROM product_variants WHERE product_id = ? ORDER BY size, colour");
+$stmt->execute([$product_id]);
+$variants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Total stock across all variants
+$totalStock = 0;
+foreach ($variants as $v) {
+    $totalStock += (int)$v['stock_quantity'];
+}
+
+// Build unique sizes and colours from variants
+$sizes = array_values(array_unique(array_filter(array_column($variants, 'size'))));
+$colours = array_values(array_unique(array_filter(array_column($variants, 'colour'))));
 ?>
 
 <?php include ROOT . '/includes/head.php'; ?>
@@ -46,16 +65,81 @@ if (!$product) {
                 </p>
 
                 <p class="text-muted small">
-                    Availability: <span class="text-success"><?php echo $product['stock_quantity']; ?> in stock</span>
+                    Availability: <span class="text-success"><?php echo $totalStock; ?> in stock</span>
                 </p>
 
-                <?php include ROOT . '/includes/color.php'; ?>
+                <?php if (empty($variants)): ?>
+                    <p class="text-warning small mb-3">This product is currently unavailable.</p>
+                <?php else: ?>
+                    <?php
+                    $variantMap = [];
+                    foreach ($variants as $v) {
+                        $key = (string)($v['size'] ?? '') . '|' . (string)($v['colour'] ?? '');
+                        $variantMap[$key] = $v;
+                    }
+                    $defaultVariant = $variants[0];
+                    ?>
+                    <form action="/cart/add_to_cart.php" method="POST" id="addToCartForm">
+                        <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
+                        <input type="hidden" name="variant_id" id="variantIdInput" value="<?php echo $defaultVariant['variant_id']; ?>">
 
-                <form action="/cart/add_to_cart.php" method="POST">
-                    <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
-                    <button type="submit" class="btn btn-dark btn-lg px-5 w-100 w-md-auto">Add to Cart
-                    </button>
-                </form>
+                        <?php if (count($sizes) > 1): ?>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Size</label>
+                            <select name="size" id="sizeSelect" class="form-select" style="max-width: 120px;">
+                                <?php foreach ($sizes as $s): ?>
+                                    <option value="<?php echo htmlspecialchars($s); ?>"><?php echo htmlspecialchars($s); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (count($colours) > 1): ?>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Colour</label>
+                            <select name="colour" id="colourSelect" class="form-select" style="max-width: 150px;">
+                                <?php foreach ($colours as $c): ?>
+                                    <option value="<?php echo htmlspecialchars($c); ?>"><?php echo htmlspecialchars($c); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php include ROOT . '/includes/color.php'; ?>
+
+                        <button type="submit" class="btn btn-dark btn-lg px-5 w-100 w-md-auto" id="addToCartBtn">
+                            Add to Cart
+                        </button>
+                    </form>
+                    <script>
+                    (function() {
+                        var variants = <?php echo json_encode($variants); ?>;
+                        var variantMap = <?php echo json_encode($variantMap); ?>;
+                        var sizeSelect = document.getElementById('sizeSelect');
+                        var colourSelect = document.getElementById('colourSelect');
+                        var variantIdInput = document.getElementById('variantIdInput');
+                        var addToCartBtn = document.getElementById('addToCartBtn');
+
+                        function getSelectedSize() { return sizeSelect ? sizeSelect.value : (variants[0] && variants[0].size) ? variants[0].size : ''; }
+                        function getSelectedColour() { return colourSelect ? colourSelect.value : (variants[0] && variants[0].colour) ? variants[0].colour : ''; }
+
+                        function updateVariantId() {
+                            var key = getSelectedSize() + '|' + getSelectedColour();
+                            var v = variantMap[key];
+                            if (v) {
+                                variantIdInput.value = v.variant_id;
+                                addToCartBtn.disabled = parseInt(v.stock_quantity) <= 0;
+                            } else {
+                                addToCartBtn.disabled = true;
+                            }
+                        }
+
+                        if (sizeSelect) sizeSelect.addEventListener('change', updateVariantId);
+                        if (colourSelect) colourSelect.addEventListener('change', updateVariantId);
+                        updateVariantId();
+                    })();
+                    </script>
+                <?php endif; ?>
             </div>
         </div>
     </main>

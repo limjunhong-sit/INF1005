@@ -44,11 +44,12 @@ $userId = (int)$_SESSION['user_id'];
 \Stripe\Stripe::setApiKey(STRIPE_SECRET_KEY);
 
 try {
-    // Get cart items to create order
+    // Get cart items to create order (include variant_id)
     $stmt = $pdo->prepare("
-        SELECT ci.product_id, ci.quantity, p.price
+        SELECT ci.product_id, ci.variant_id, ci.quantity, p.price
         FROM cart c
         JOIN cart_items ci ON c.cart_id = ci.cart_id
+        JOIN product_variants pv ON ci.variant_id = pv.variant_id
         JOIN products p ON ci.product_id = p.product_id
         WHERE c.user_id = ?
     ");
@@ -85,10 +86,10 @@ try {
     $stmt->execute([$userId, $dbTotal, $shippingAddress]);
     $orderId = (int)$pdo->lastInsertId();
 
-    // Create order items
-    $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)");
+    // Create order items (include variant_id)
+    $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, variant_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)");
     foreach ($cartItems as $item) {
-        $stmt->execute([$orderId, $item['product_id'], $item['quantity'], $item['price']]);
+        $stmt->execute([$orderId, $item['product_id'], $item['variant_id'], $item['quantity'], $item['price']]);
     }
 
     // Create payment record

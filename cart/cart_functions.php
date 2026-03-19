@@ -17,19 +17,28 @@ function getActiveCartId(PDO $pdo, int $userId): int {
     return (int)$pdo->lastInsertId();
 }
 
-function addToCart(PDO $pdo, int $userId, int $productId, int $quantity = 1): void {
+function addToCart(PDO $pdo, int $userId, int $variantId, int $quantity = 1): void {
     $cartId = getActiveCartId($pdo, $userId);
 
-    $stmt = $pdo->prepare("SELECT item_id, quantity FROM cart_items WHERE cart_id = ? AND product_id = ? LIMIT 1");
-    $stmt->execute([$cartId, $productId]);
+    // Get product_id from variant
+    $stmt = $pdo->prepare("SELECT product_id FROM product_variants WHERE variant_id = ?");
+    $stmt->execute([$variantId]);
+    $variant = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$variant) {
+        return;
+    }
+    $productId = (int)$variant['product_id'];
+
+    $stmt = $pdo->prepare("SELECT item_id, quantity FROM cart_items WHERE cart_id = ? AND variant_id = ? LIMIT 1");
+    $stmt->execute([$cartId, $variantId]);
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($item) {
         $stmt = $pdo->prepare("UPDATE cart_items SET quantity = quantity + ? WHERE item_id = ?");
         $stmt->execute([$quantity, $item['item_id']]);
     } else {
-        $stmt = $pdo->prepare("INSERT INTO cart_items (cart_id, product_id, quantity, added_at) VALUES (?, ?, ?, NOW())");
-        $stmt->execute([$cartId, $productId, $quantity]);
+        $stmt = $pdo->prepare("INSERT INTO cart_items (cart_id, product_id, variant_id, quantity, added_at) VALUES (?, ?, ?, ?, NOW())");
+        $stmt->execute([$cartId, $productId, $variantId, $quantity]);
     }
 }
 
@@ -38,13 +47,19 @@ function getCartItems(PDO $pdo, int $userId): array {
         SELECT
             ci.item_id,
             ci.product_id,
+            ci.variant_id,
             ci.quantity,
             p.name,
+            p.name AS product_name,
             p.description,
             p.price,
-            p.image_url
+            p.image_url,
+            pv.size,
+            pv.colour,
+            pv.stock_quantity AS variant_stock
         FROM cart c
         JOIN cart_items ci ON c.cart_id = ci.cart_id
+        JOIN product_variants pv ON ci.variant_id = pv.variant_id
         JOIN products p ON ci.product_id = p.product_id
         WHERE c.user_id = ?
         ORDER BY ci.added_at DESC

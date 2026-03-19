@@ -10,9 +10,13 @@ $action = $_POST['action'] ?? '';
 // DELETE PRODUCT
 // ==========================================
 if ($action === 'delete') {
-    // Changed $_POST['id'] to $_POST['product_id']
-    $stmt = $pdo->prepare("DELETE FROM products WHERE product_id = ?");
-    $stmt->execute([$_POST['product_id']]);
+    $productId = (int)($_POST['product_id'] ?? 0);
+    if ($productId) {
+        $stmt = $pdo->prepare("DELETE FROM product_variants WHERE product_id = ?");
+        $stmt->execute([$productId]);
+        $stmt = $pdo->prepare("DELETE FROM products WHERE product_id = ?");
+        $stmt->execute([$productId]);
+    }
 }
 
 // ==========================================
@@ -58,11 +62,14 @@ if ($action === 'save') {
         }
     }
 
-    // 2. Validate Numbers (Ensure they are actually numbers)
+    // 2. Validate Numbers
     $price = filter_var($_POST['price'] ?? 0, FILTER_VALIDATE_FLOAT);
     $stock = filter_var($_POST['stock'] ?? 0, FILTER_VALIDATE_INT);
+    if (empty($id)) {
+        $stock = ($stock === false || $stock < 0) ? 0 : $stock;
+    }
 
-    // 3. Final Verification: If validation failed, redirect back with error instead of showing a blank page
+    // 3. Final Verification
     if (empty($name) || empty($desc) || empty($img)) {
         $_SESSION['admin_error'] = "Name, description, and image cannot be empty.";
         header("Location: index.php");
@@ -73,7 +80,7 @@ if ($action === 'save') {
         header("Location: index.php");
         exit();
     }
-    if ($stock === false || $stock < 0) {
+    if (empty($id) && ($stock === false || $stock < 0)) {
         $_SESSION['admin_error'] = "Stock must be a valid whole number (0 or higher).";
         header("Location: index.php");
         exit();
@@ -92,18 +99,45 @@ if ($action === 'save') {
     }
 
     try {
-        // 3. Decide: Are we Updating or Inserting?
         if (!empty($id)) {
-            // UPDATE EXISTING PRODUCT (Because an ID was sent from the Edit Modal)
+            // UPDATE EXISTING PRODUCT (variants managed separately in variants UI)
             $sql = "UPDATE products 
-                    SET name=?, price=?, stock_quantity=?, description=?, image_url=?, category_id=? 
+                    SET name=?, price=?, description=?, image_url=?, category_id=? 
                     WHERE product_id=?";
-            $pdo->prepare($sql)->execute([$name, $price, $stock, $desc, $img, $catId, $id]);
+            $pdo->prepare($sql)->execute([$name, $price, $desc, $img, $catId, $id]);
+            // Ensure at least one variant exists
+            $stmt = $pdo->prepare("SELECT variant_id FROM product_variants WHERE product_id = ? LIMIT 1");
+            $stmt->execute([$id]);
+            if (!$stmt->fetch()) {
+                $stmt = $pdo->prepare("INSERT INTO product_variants (product_id, size, colour, stock_quantity) VALUES (?, 'One Size', NULL, 0)");
+                $stmt->execute([$id]);
+            }
         } else {
-            // INSERT NEW PRODUCT (Because no ID was sent from the Add Modal)
-            $sql = "INSERT INTO products (name, price, stock_quantity, description, image_url, category_id) 
-                    VALUES (?, ?, ?, ?, ?, ?)";
-            $pdo->prepare($sql)->execute([$name, $price, $stock, $desc, $img, $catId]);
+            // INSERT NEW PRODUCT
+            $sql = "INSERT INTO products (name, price, description, image_url, category_id) 
+                    VALUES (?, ?, ?, ?, ?)";
+            $pdo->prepare($sql)->execute([$name, $price, $desc, $img, $catId]);
+            $productId = (int)$pdo->lastInsertId();
+
+            $sizes = $_POST['variant_size'] ?? [];
+            $colours = $_POST['variant_colour'] ?? [];
+            $stocks = $_POST['variant_stock'] ?? [];
+            if (is_string($sizes)) $sizes = [$sizes];
+            if (is_string($colours)) $colours = [$colours];
+            if (is_string($stocks)) $stocks = [$stocks];
+
+            if (!empty($sizes) && !empty($stocks)) {
+                $stmt = $pdo->prepare("INSERT INTO product_variants (product_id, size, colour, stock_quantity) VALUES (?, ?, ?, ?)");
+                foreach ($sizes as $i => $size) {
+                    $sizeVal = trim(htmlspecialchars($size ?? '', ENT_QUOTES, 'UTF-8')) ?: null;
+                    $colourVal = isset($colours[$i]) ? (trim(htmlspecialchars($colours[$i], ENT_QUOTES, 'UTF-8')) ?: null) : null;
+                    $stockVal = isset($stocks[$i]) ? max(0, (int)$stocks[$i]) : 0;
+                    $stmt->execute([$productId, $sizeVal ?: 'One Size', $colourVal, $stockVal]);
+                }
+            } else {
+                $stmt = $pdo->prepare("INSERT INTO product_variants (product_id, size, colour, stock_quantity) VALUES (?, 'One Size', NULL, ?)");
+                $stmt->execute([$productId, max(0, (int)$stock)]);
+            }
         }
     } catch (PDOException $e) {
         // Catch any database crashes (like if a string is too long for a column)

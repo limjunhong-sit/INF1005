@@ -4,39 +4,67 @@ require_once ROOT . '/config/db_connect.php';
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 include ROOT . '/config/admin_timeout.php';
 
-$totalProducts = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
-$menItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Men'")->fetchColumn();
-$womenItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Women'")->fetchColumn();
+try {
+    $totalProducts = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+    $menItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Men'")->fetchColumn();
+    $womenItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Women'")->fetchColumn();
 
-$settingStmt = $pdo->query("SELECT setting_value FROM settings WHERE setting_key = 'low_stock_threshold'");
-$threshold = $settingStmt->fetchColumn();
-if ($threshold === false) $threshold = 5; 
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM products WHERE stock_quantity < ?");
-$stmt->execute([$threshold]);
-$lowStock = $stmt->fetchColumn();
-
-$sql = "SELECT p.*, c.name as cat_name, c.department 
-        FROM products p 
-        JOIN categories c ON p.category_id = c.category_id 
-        ORDER BY p.product_id DESC";
-$stmt = $pdo->query($sql);
-$products = $stmt->fetchAll();
-
-$catStmt = $pdo->query("SELECT department, name FROM categories ORDER BY department, name");
-$categoriesByDept = [];
-while ($row = $catStmt->fetch(PDO::FETCH_ASSOC)) {
-    $dept = $row['department'];
-    if (!isset($categoriesByDept[$dept])) {
-        $categoriesByDept[$dept] = [];
+    $threshold = 5;
+    try {
+        $settingStmt = $pdo->query("SELECT setting_value FROM settings WHERE setting_key = 'low_stock_threshold'");
+        if ($settingStmt && ($t = $settingStmt->fetchColumn()) !== false) {
+            $threshold = (int)$t;
+        }
+    } catch (PDOException $e) {
+        $threshold = 5;
     }
-    $categoriesByDept[$dept][] = $row['name'];
-}
 
-$womenOrder = ['Tops', 'Dresses', 'Jackets', 'Skirts', 'Accessories'];
-if (!empty($categoriesByDept['Women'])) {
-    $categoriesByDept['Women'] = array_values(
-        array_intersect($womenOrder, $categoriesByDept['Women'])
-    );
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) FROM (
+            SELECT p.product_id, COALESCE(SUM(pv.stock_quantity), 0) AS total_stock
+            FROM products p
+            LEFT JOIN product_variants pv ON p.product_id = pv.product_id
+            GROUP BY p.product_id
+            HAVING total_stock < ?
+        ) AS low_stock_products
+    ");
+    $stmt->execute([$threshold]);
+    $lowStock = $stmt->fetchColumn();
+
+    $sql = "SELECT p.product_id, p.name, p.price, p.description, p.image_url, p.category_id,
+            c.name AS cat_name, c.department,
+            COALESCE(SUM(pv.stock_quantity), 0) AS total_stock
+            FROM products p
+            JOIN categories c ON p.category_id = c.category_id
+            LEFT JOIN product_variants pv ON p.product_id = pv.product_id
+            GROUP BY p.product_id, p.name, p.price, p.description, p.image_url, p.category_id, c.name, c.department
+            ORDER BY p.product_id DESC";
+    $stmt = $pdo->query($sql);
+    $products = $stmt->fetchAll();
+
+    $catStmt = $pdo->query("SELECT department, name FROM categories ORDER BY department, name");
+    $categoriesByDept = [];
+    while ($row = $catStmt->fetch(PDO::FETCH_ASSOC)) {
+        $dept = $row['department'];
+        if (!isset($categoriesByDept[$dept])) {
+            $categoriesByDept[$dept] = [];
+        }
+        $categoriesByDept[$dept][] = $row['name'];
+    }
+
+    $womenOrder = ['Tops', 'Dresses', 'Jackets', 'Skirts', 'Accessories'];
+    if (!empty($categoriesByDept['Women'])) {
+        $categoriesByDept['Women'] = array_values(
+            array_intersect($womenOrder, $categoriesByDept['Women'])
+        );
+    }
+} catch (PDOException $e) {
+    error_log("Admin index error: " . $e->getMessage());
+    $_SESSION['admin_error'] = "Database error. Please ensure all tables (products, categories, product_variants) exist.";
+    $totalProducts = $menItems = $womenItems = $lowStock = 0;
+    $products = [];
+    $categoriesByDept = ['Men' => [], 'Women' => []];
+    $threshold = 5;
 }
 ?>
 
@@ -142,8 +170,8 @@ if (!empty($categoriesByDept['Women'])) {
                         </td>
                         <td><?php echo htmlspecialchars($p['cat_name']); ?></td>
                         <td class="price">$<?php echo number_format($p['price'], 2); ?></td>
-                        <td class="<?php echo $p['stock_quantity'] < $threshold ? 'stock-low' : 'stock-ok'; ?>">
-                            <?php echo $p['stock_quantity']; ?> in stock
+                        <td class="<?php echo ($p['total_stock'] ?? 0) < $threshold ? 'stock-low' : 'stock-ok'; ?>">
+                            <?php echo (int)($p['total_stock'] ?? 0); ?> in stock
                         </td>
                         <td>
                             <button class="btn-edit" onclick="openEditModal(
@@ -152,7 +180,7 @@ if (!empty($categoriesByDept['Women'])) {
                                 <?php echo $p['price']; ?>, 
                                 '<?php echo $p['department']; ?>', 
                                 '<?php echo $p['cat_name']; ?>', 
-                                <?php echo $p['stock_quantity']; ?>, 
+                                <?php echo (int)($p['total_stock'] ?? 0); ?>, 
                                 '<?php echo addslashes($p['description']); ?>',
                                 '<?php echo $p['image_url']; ?>'
                             )">Edit</button>
@@ -205,10 +233,75 @@ if (!empty($categoriesByDept['Women'])) {
                         <label>Price ($)</label>
                         <input type="number" name="price" id="productPrice" placeholder="0.00" step="0.01" min="0" required>
                     </div>
-                    <div class="form-group">
-                        <label>Stock Quantity</label>
-                        <input type="number" name="stock" id="productStock" placeholder="0" min="0" required>
+                    <div class="form-group" id="productStockGroup">
+                        <label>Stock Quantity <span class="text-muted small">(used if no variants below)</span></label>
+                        <input type="number" name="stock" id="productStock" placeholder="0" min="0" value="0" required>
                     </div>
+                </div>
+
+                <div id="variantsSection" class="form-group">
+                    <hr class="my-4">
+                    <label class="fw-bold mb-2">Size / Colour Variants</label>
+                    <p class="text-muted small mb-3">Manage different sizes and colours for this product. Each variant has its own stock.</p>
+                    <div class="mb-3 p-3 border rounded" style="background: #f8f9fa;">
+                        <label class="small fw-semibold mb-2 d-block">Add New Variant</label>
+                        <div class="d-flex flex-wrap gap-2 align-items-end">
+                            <div>
+                                <label class="small text-muted d-block">Size</label>
+                                <select id="newVariantSize" class="form-select form-select-sm" style="width: 120px;">
+                                    <option value="">— Select —</option>
+                                    <option value="XS">XS</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                    <option value="2XL">2XL</option>
+                                    <option value="One Size">One Size</option>
+                                    <option value="_custom">Other (type below)</option>
+                                </select>
+                                <input type="text" id="newVariantSizeCustom" class="form-control form-control-sm mt-1" placeholder="Custom size" style="width: 120px; display: none;">
+                            </div>
+                            <div>
+                                <label class="small text-muted d-block">Colour</label>
+                                <select id="newVariantColour" class="form-select form-select-sm" style="width: 120px;">
+                                    <option value="">— Select —</option>
+                                    <option value="Black">Black</option>
+                                    <option value="White">White</option>
+                                    <option value="Navy">Navy</option>
+                                    <option value="Grey">Grey</option>
+                                    <option value="Charcoal">Charcoal</option>
+                                    <option value="Red">Red</option>
+                                    <option value="Blue">Blue</option>
+                                    <option value="Green">Green</option>
+                                    <option value="Burgundy">Burgundy</option>
+                                    <option value="Camel">Camel</option>
+                                    <option value="Brown">Brown</option>
+                                    <option value="Pink">Pink</option>
+                                    <option value="Beige">Beige</option>
+                                    <option value="_custom">Other (type below)</option>
+                                </select>
+                                <input type="text" id="newVariantColourCustom" class="form-control form-control-sm mt-1" placeholder="Custom colour" style="width: 120px; display: none;">
+                            </div>
+                            <div>
+                                <label class="small text-muted d-block">Stock</label>
+                                <input type="number" id="newVariantStock" class="form-control form-control-sm" min="0" value="0" style="width: 80px;">
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark" id="addVariantBtn">Add Variant</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead><tr><th>Size</th><th>Colour</th><th>Stock</th><th>Actions</th></tr></thead>
+                            <tbody id="variantsTableBody"></tbody>
+                            <tbody id="variantsToAddBody"></tbody>
+                        </table>
+                    </div>
+                    <datalist id="sizeList">
+                        <option value="XS"><option value="S"><option value="M"><option value="L"><option value="XL"><option value="2XL"><option value="One Size">
+                    </datalist>
+                    <datalist id="colourList">
+                        <option value="Black"><option value="White"><option value="Navy"><option value="Grey"><option value="Charcoal"><option value="Red"><option value="Blue"><option value="Green"><option value="Burgundy"><option value="Camel"><option value="Brown"><option value="Pink"><option value="Beige">
+                    </datalist>
                 </div>
                 
                 <div class="form-group">
