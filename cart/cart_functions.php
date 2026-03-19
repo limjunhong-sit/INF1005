@@ -61,4 +61,40 @@ function getCartTotal(array $items): float {
     }
     return $total;
 }
+
+function savePurchaseHistory(PDO $pdo, int $userId, array $items, float $total): int {
+    // Save the order
+    $stmt = $pdo->prepare("INSERT INTO purchase_history (user_id, total_amount, purchased_at) VALUES (?, ?, NOW())");
+    $stmt->execute([$userId, $total]);
+    $orderId = (int)$pdo->lastInsertId();
+
+    // Save each item
+    foreach ($items as $item) {
+        $stmt = $pdo->prepare("
+            INSERT INTO purchase_history_items (order_id, product_id, product_name, quantity, price)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $stmt->execute([
+            $orderId,
+            $item['product_id'],
+            $item['name'],
+            $item['quantity'],
+            $item['price']
+        ]);
+    }
+
+    return $orderId;
+}
+
+function clearCart(PDO $pdo, int $userId): void {
+    $stmt = $pdo->prepare("SELECT cart_id FROM cart WHERE user_id = ? LIMIT 1");
+    $stmt->execute([$userId]);
+    $cart = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($cart) {
+        $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = ?");
+        $stmt->execute([$cart['cart_id']]);
+    }
+}
+
 ?>

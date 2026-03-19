@@ -92,7 +92,12 @@ if (!empty($paymentId)) {
                         Amount paid: $<?= number_format($orderDetails['amount'], 2) ?>
                     </p>
                 <?php endif; ?>
-                <a href="/index.php" class="checkout-btn success-btn">Continue Shopping</a>
+                <a href="/cart/purchase_history.php" class="checkout-btn success-btn" style="margin-bottom: 12px;">
+                    View Purchase History
+                </a>
+                <a href="/index.php" class="shop-btn" style="display:block; text-align:center; margin-top: 4px;">
+                    Continue Shopping
+                </a>
             </div>
         </div>
     </div>
