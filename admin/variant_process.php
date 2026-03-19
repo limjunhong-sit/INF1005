@@ -80,11 +80,23 @@ if ($action === 'delete_variant') {
             jsonError('Product must have at least one variant. Add another before deleting.');
         }
 
+        // Remove cart_items that reference this variant (required before FK delete)
+        $stmt = $pdo->prepare("DELETE FROM cart_items WHERE variant_id = ?");
+        $stmt->execute([$variantId]);
+
+        // Check if variant is in any orders - if so, cannot delete
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM order_items WHERE variant_id = ?");
+        $stmt->execute([$variantId]);
+        if ((int)$stmt->fetchColumn() > 0) {
+            jsonError('Cannot delete: this variant has been ordered. Consider setting stock to 0 instead.');
+        }
+
         $stmt = $pdo->prepare("DELETE FROM product_variants WHERE variant_id = ?");
         $stmt->execute([$variantId]);
         jsonSuccess();
     } catch (PDOException $e) {
-        jsonError('Failed to delete variant');
+        error_log("Variant delete error: " . $e->getMessage());
+        jsonError('Failed to delete variant. It may be referenced in orders.');
     }
 }
 

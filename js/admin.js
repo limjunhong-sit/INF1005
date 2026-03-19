@@ -36,8 +36,31 @@ function openEditModal(id, name, price, dept, category, stock, desc, img) {
     loadVariants(id);
 }
 
+const SIZE_OPTIONS = ['', 'XS', 'S', 'M', 'L', 'XL', '2XL', 'One Size'];
+const COLOUR_OPTIONS = ['', 'Black', 'White', 'Navy', 'Grey', 'Charcoal', 'Red', 'Blue', 'Green', 'Burgundy', 'Camel', 'Brown', 'Pink', 'Beige'];
+
+function makeSizeOptions(selected) {
+    var opts = SIZE_OPTIONS.filter(s => s !== '').map(s =>
+        '<option value="' + escapeHtml(s) + '"' + (s === selected ? ' selected' : '') + '>' + escapeHtml(s) + '</option>'
+    ).join('');
+    if (selected && !SIZE_OPTIONS.includes(selected)) {
+        opts = '<option value="' + escapeHtml(selected) + '" selected>' + escapeHtml(selected) + '</option>' + opts;
+    }
+    return '<option value="">—</option>' + opts;
+}
+
+function makeColourOptions(selected) {
+    var opts = COLOUR_OPTIONS.filter(c => c !== '').map(c =>
+        '<option value="' + escapeHtml(c) + '"' + (c === selected ? ' selected' : '') + '>' + escapeHtml(c) + '</option>'
+    ).join('');
+    if (selected && !COLOUR_OPTIONS.includes(selected)) {
+        opts = '<option value="' + escapeHtml(selected) + '" selected>' + escapeHtml(selected) + '</option>' + opts;
+    }
+    return '<option value="">—</option>' + opts;
+}
+
 function loadVariants(productId) {
-    fetch('get_variants.php?product_id=' + productId)
+    fetch(window.location.pathname.replace(/\/[^/]*$/, '/') + 'get_variants.php?product_id=' + productId)
         .then(r => r.json())
         .then(data => {
             if (data.error) return;
@@ -49,20 +72,21 @@ function loadVariants(productId) {
 function renderVariants(variants) {
     const tbody = document.getElementById('variantsTableBody');
     if (!tbody) return;
-    tbody.innerHTML = variants.map(v => `
-        <tr data-variant-id="${v.variant_id}">
-            <td><input type="text" class="form-control form-control-sm variant-size" value="${escapeHtml(v.size || '')}" list="sizeList" style="width:90px" placeholder="Size"></td>
-            <td><input type="text" class="form-control form-control-sm variant-colour" value="${escapeHtml(v.colour || '')}" list="colourList" style="width:90px" placeholder="Colour"></td>
-            <td><input type="number" class="form-control form-control-sm variant-stock" value="${v.stock_quantity}" min="0" style="width:70px"></td>
-            <td>
-                <button type="button" class="btn btn-sm btn-outline-dark update-variant-btn">Update</button>
-                <button type="button" class="btn btn-sm btn-outline-danger delete-variant-btn">Delete</button>
-            </td>
-        </tr>
-    `).join('') || '<tr><td colspan="4" class="text-muted">No variants yet. Add one above.</td></tr>';
+    var sizeVal, colourVal;
+    tbody.innerHTML = variants.map(v => {
+        sizeVal = v.size || '';
+        colourVal = v.colour || '';
+        return '<tr data-variant-id="' + v.variant_id + '">' +
+            '<td><select class="form-select form-select-sm variant-size" style="width:100px">' + makeSizeOptions(sizeVal) + '</select></td>' +
+            '<td><select class="form-select form-select-sm variant-colour" style="width:100px">' + makeColourOptions(colourVal) + '</select></td>' +
+            '<td><input type="number" class="form-control form-control-sm variant-stock" value="' + v.stock_quantity + '" min="0" style="width:70px"></td>' +
+            '<td><button type="button" class="btn btn-sm btn-outline-dark update-variant-btn">Update</button> ' +
+            '<button type="button" class="btn btn-sm btn-outline-danger delete-variant-btn">Delete</button></td></tr>';
+    }).join('') || '<tr><td colspan="4" class="text-muted">No variants yet. Add one above.</td></tr>';
 
     tbody.querySelectorAll('.update-variant-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
             const row = this.closest('tr');
             const variantId = row.dataset.variantId;
             const size = row.querySelector('.variant-size').value.trim() || null;
@@ -72,7 +96,9 @@ function renderVariants(variants) {
         });
     });
     tbody.querySelectorAll('.delete-variant-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const row = this.closest('tr');
             const variantId = row.dataset.variantId;
             if (confirm('Delete this variant?')) deleteVariant(variantId, row);
@@ -93,7 +119,7 @@ function updateVariant(variantId, size, colour, stock, row) {
     fd.append('size', size || '');
     fd.append('colour', colour || '');
     fd.append('stock', stock);
-    fetch('variant_process.php', { method: 'POST', body: fd })
+    fetch(window.location.pathname.replace(/\/[^/]*$/, '/') + 'variant_process.php', { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (data.success) {
@@ -109,7 +135,7 @@ function deleteVariant(variantId, row) {
     const fd = new FormData();
     fd.append('action', 'delete_variant');
     fd.append('variant_id', variantId);
-    fetch('variant_process.php', { method: 'POST', body: fd })
+    fetch(window.location.pathname.replace(/\/[^/]*$/, '/') + 'variant_process.php', { method: 'POST', body: fd })
         .then(r => r.json())
         .then(data => {
             if (data.success) loadVariants(productId);
@@ -154,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fd.append('size', size || '');
                 fd.append('colour', colour || '');
                 fd.append('stock', stock);
-                fetch('variant_process.php', { method: 'POST', body: fd })
+                fetch(window.location.pathname.replace(/\/[^/]*$/, '/') + 'variant_process.php', { method: 'POST', body: fd })
                     .then(r => r.json())
                     .then(data => {
                         if (data.success) {
@@ -173,10 +199,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 var sizeVal = size || 'One Size';
                 var colourVal = colour || '';
                 var row = document.createElement('tr');
-                row.innerHTML = '<td>' + escapeHtml(sizeVal) + '</td><td>' + escapeHtml(colourVal) + '</td><td>' + stock + '</td><td><button type="button" class="btn btn-sm btn-outline-danger remove-pending-variant">Remove</button>' +
-                    '<input type="hidden" name="variant_size[]" value="' + escapeHtml(sizeVal) + '">' +
-                    '<input type="hidden" name="variant_colour[]" value="' + escapeHtml(colourVal) + '">' +
-                    '<input type="hidden" name="variant_stock[]" value="' + stock + '"></td>';
+                row.innerHTML = '<td><select name="variant_size[]" class="form-select form-select-sm" style="width:100px">' + makeSizeOptions(sizeVal) + '</select></td>' +
+                    '<td><select name="variant_colour[]" class="form-select form-select-sm" style="width:100px">' + makeColourOptions(colourVal) + '</select></td>' +
+                    '<td><input type="number" name="variant_stock[]" class="form-control form-control-sm" value="' + stock + '" min="0" style="width:70px"></td>' +
+                    '<td><button type="button" class="btn btn-sm btn-outline-danger remove-pending-variant">Remove</button></td>';
                 toAddBody.appendChild(row);
                 row.querySelector('.remove-pending-variant')?.addEventListener('click', function() { row.remove(); });
                 if (sizeSelect) sizeSelect.value = '';

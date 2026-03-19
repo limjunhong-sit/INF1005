@@ -296,12 +296,6 @@ try {
                             <tbody id="variantsToAddBody"></tbody>
                         </table>
                     </div>
-                    <datalist id="sizeList">
-                        <option value="XS"><option value="S"><option value="M"><option value="L"><option value="XL"><option value="2XL"><option value="One Size">
-                    </datalist>
-                    <datalist id="colourList">
-                        <option value="Black"><option value="White"><option value="Navy"><option value="Grey"><option value="Charcoal"><option value="Red"><option value="Blue"><option value="Green"><option value="Burgundy"><option value="Camel"><option value="Brown"><option value="Pink"><option value="Beige">
-                    </datalist>
                 </div>
                 
                 <div class="form-group">
