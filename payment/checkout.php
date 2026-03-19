@@ -41,93 +41,170 @@ foreach ($items as $item) {
     $total += $item['price'] * $item['quantity'];
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <?php include ROOT . '/includes/head.php'; ?>
-<link rel="stylesheet" href="/css/cart.css">
-<link rel="stylesheet" href="/css/payment.css">
 <body>
-    <div class="cart-page">
-        <div class="cart-container checkout-container">
+    <?php include ROOT . '/includes/header.php'; ?>
+    <style>
+        body, main, .section, .container { overflow: visible !important; }
+        
+        .story-grid {
+            display: grid !important;
+            grid-template-columns: 1.5fr 1fr !important; 
+            gap: 60px !important;
+            align-items: start !important;
+            overflow: visible !important;
+        }
 
-            <!-- Order Summary -->
-            <div class="cart-left">
-                <h1>Order Summary</h1>
+        .checkout-right {
+            display: block !important;
+            height: 100%;
+            position: relative;
+        }
 
-                <?php foreach ($items as $item): ?>
-                    <div class="cart-card checkout-card">
-                        <div class="cart-image">
-                            <img src="/<?= htmlspecialchars($item['image_url']) ?>"
-                                 alt="<?= htmlspecialchars($item['name']) ?>">
+        .checkout-right .contact-card {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+            top: 120px !important;
+            z-index: 1000;
+            width: 100%;
+            height: fit-content !important;
+        }
+
+        .checkout-left .mv-card {
+            background-color: #ffffff !important;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
+        }
+
+        
+        body.dark-theme .checkout-left .mv-card {
+            background-color: rgba(255, 255, 255, 0.03) !important; 
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkout-right .form-control::placeholder {
+            color: #999999 !important; 
+            opacity: 1; 
+        }
+
+        body.dark-theme .checkout-right .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important; 
+            opacity: 1;
+        }
+
+        .stripe-wrapper {
+            background: #ffffff;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        @media (max-width: 992px) {
+            .story-grid { grid-template-columns: 1fr !important; }
+        }
+    </style>
+
+
+    <main>
+        <div class="section">
+            <div class="container">
+                <div class="story-grid">
+                    
+                    <div class="checkout-left">
+                        <h1 class="story-heading mb-5">Order Summary</h1>
+
+                        <?php foreach ($items as $item): ?>
+                            <div class="mv-card mb-4 d-flex gap-4 align-items-center p-3">
+                                <div class="cart-image">
+                                    <img src="/<?= htmlspecialchars($item['image_url']) ?>" 
+                                         alt="<?= htmlspecialchars($item['name']) ?>"
+                                         style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
+                                </div>
+                                
+                                <div class="flex-grow-1">
+                                    <h2 class="contact-title mb-1" style="font-size: 1.2rem;"><?= htmlspecialchars($item['name']) ?></h2>
+                                    <p class="contact-body mb-0" style="font-size: 0.9rem;">
+                                        $<?= number_format($item['price'], 2) ?> &times; <?= $item['quantity'] ?>
+                                    </p>
+                                </div>
+                                
+                                <div class="text-end">
+                                    <p class="stat-number m-0" style="font-size: 1.2rem;">
+                                        $<?= number_format($item['price'] * $item['quantity'], 2) ?>
+                                    </p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+
+                        <div class="mt-4 pt-4 border-top border-secondary d-flex justify-content-between align-items-center">
+                            <a href="/cart/cart.php" class="btn btn-outline-dark">&larr; Back to Cart</a>
+                            <div class="text-end">
+                                <span class="contact-body me-3">Subtotal</span>
+                                <span class="stat-number" style="font-size: 1.8rem;">$<?= number_format($total, 2) ?></span>
+                            </div>
                         </div>
-                        <div class="cart-details">
-                            <h2><?= htmlspecialchars($item['name']) ?></h2>
-                            <p class="price">$<?= number_format($item['price'], 2) ?> x <?= $item['quantity'] ?></p>
+                    </div>
+
+                    <div class="checkout-right">
+                        <div class="contact-card shadow-sm">
+                            <h2 class="contact-title mb-4 border-bottom border-secondary pb-3">Payment Details</h2>
+
+                            <div class="mb-4">
+                                <label class="contact-body mb-2 fw-bold" style="font-size: 0.9rem;">Shipping Address</label>
+                                <textarea id="shipping-address" class="form-control" rows="3" placeholder="Enter your full shipping address" required style="background: var(--warm-white); color: var(--charcoal); border-color: var(--border);"></textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="contact-body mb-2 fw-bold" style="font-size: 0.9rem;">Name on Card</label>
+                                <input type="text" id="cardholder-name" class="form-control" placeholder="John Doe" required style="background: var(--warm-white); color: var(--charcoal); border-color: var(--border);">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="contact-body mb-2 fw-bold" style="font-size: 0.9rem;">Card Information</label>
+                                <div class="stripe-wrapper">
+                                    <div id="card-element"></div>
+                                </div>
+                            </div>
+
+                            <div id="card-errors" class="text-danger mb-3 small fw-bold" role="alert"></div>
+
+                            <input type="hidden" id="csrf_token" value="<?= generate_csrf_token() ?>">
+
+                            <button id="pay-btn" class="btn btn-dark w-100 py-3 mb-3 fw-bold" style="letter-spacing: 2px; text-transform: uppercase;">
+                                Pay $<?= number_format($total, 2) ?>
+                            </button>
+
+                            <p class="text-center text-muted mb-0" style="font-size: 0.75rem; letter-spacing: 1px;">
+                                &#128274; SECURELY PROCESSED BY STRIPE
+                            </p>
                         </div>
-                        <div class="cart-subtotal">
-                            $<?= number_format($item['price'] * $item['quantity'], 2) ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-
-                <div class="summary-card checkout-total">
-                    <div class="summary-total-row">
-                        <span>Total</span>
-                        <span>$<?= number_format($total, 2) ?></span>
-                    </div>
-                </div>
-
-                <a href="/cart/cart.php" class="shop-btn back-to-cart">Back to Cart</a>
-            </div>
-
-            <!-- Payment Form -->
-            <div class="cart-right">
-                <div class="summary-card">
-                    <h2>Payment Details</h2>
-
-                    <div class="payment-field">
-                        <label class="payment-label">Shipping Address</label>
-                        <textarea id="shipping-address" class="payment-textarea" placeholder="Enter your shipping address" required></textarea>
                     </div>
 
-                    <div class="payment-field">
-                        <label class="payment-label">Cardholder Name</label>
-                        <input type="text" id="cardholder-name" class="payment-input" placeholder="Name on card" required>
-                    </div>
-
-                    <div class="payment-field">
-                        <label class="payment-label">Card Information</label>
-                        <div id="card-element" class="payment-card-element"></div>
-                    </div>
-
-                    <div id="card-errors" class="payment-error" role="alert"></div>
-
-                    <input type="hidden" id="csrf_token" value="<?= generate_csrf_token() ?>">
-
-                    <button id="pay-btn" class="checkout-btn">
-                        Pay $<?= number_format($total, 2) ?>
-                    </button>
-
-                    <p class="summary-note">&#128274; Payments are securely processed by Stripe</p>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
+
+    <?php include ROOT . '/includes/footer.php'; ?>
 
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         const stripe = Stripe('<?= STRIPE_PUBLISHABLE_KEY ?>');
         const elements = stripe.elements();
+        
         const cardElement = elements.create('card', {
             hidePostalCode: true,
             style: {
                 base: {
-                    fontSize: '14px',
-                    color: '#1c1b19',
+                    fontSize: '16px',
+                    color: '#333333',
                     fontFamily: 'Jost, sans-serif',
-                    '::placeholder': { color: '#9e9b95' }
+                    '::placeholder': { color: '#aab7c4' }
                 },
-                invalid: { color: '#b44' }
+                invalid: { color: '#dc3545' }
             }
         });
         cardElement.mount('#card-element');
@@ -139,19 +216,20 @@ foreach ($items as $item) {
         document.getElementById('pay-btn').addEventListener('click', async function() {
             const cardholderName = document.getElementById('cardholder-name').value.trim();
             const shippingAddress = document.getElementById('shipping-address').value.trim();
+            const errorDiv = document.getElementById('card-errors');
+            const btn = this;
 
             if (!shippingAddress) {
-                document.getElementById('card-errors').textContent = 'Please enter your shipping address.';
+                errorDiv.textContent = 'Please enter your shipping address.';
                 return;
             }
             if (!cardholderName) {
-                document.getElementById('card-errors').textContent = 'Please enter the cardholder name.';
+                errorDiv.textContent = 'Please enter the name on the card.';
                 return;
             }
 
-            this.disabled = true;
-            this.classList.add('processing');
-            this.textContent = 'Processing...';
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing...';
 
             try {
                 const response = await fetch('process_payment.php', {
@@ -163,13 +241,13 @@ foreach ($items as $item) {
                         csrf_token: document.getElementById('csrf_token').value
                     })
                 });
+                
                 const data = await response.json();
 
                 if (data.error) {
-                    document.getElementById('card-errors').textContent = data.error;
-                    this.disabled = false;
-                    this.classList.remove('processing');
-                    this.textContent = 'Pay $<?= number_format($total, 2) ?>';
+                    errorDiv.textContent = data.error;
+                    btn.disabled = false;
+                    btn.textContent = 'Pay $<?= number_format($total, 2) ?>';
                     return;
                 }
 
@@ -181,18 +259,16 @@ foreach ($items as $item) {
                 });
 
                 if (result.error) {
-                    document.getElementById('card-errors').textContent = result.error.message;
-                    this.disabled = false;
-                    this.classList.remove('processing');
-                    this.textContent = 'Pay $<?= number_format($total, 2) ?>';
+                    errorDiv.textContent = result.error.message;
+                    btn.disabled = false;
+                    btn.textContent = 'Pay $<?= number_format($total, 2) ?>';
                 } else {
                     window.location.href = 'payment_success.php?payment_id=' + result.paymentIntent.id;
                 }
             } catch (err) {
-                document.getElementById('card-errors').textContent = 'An error occurred. Please try again.';
-                this.disabled = false;
-                this.classList.remove('processing');
-                this.textContent = 'Pay $<?= number_format($total, 2) ?>';
+                errorDiv.textContent = 'An error occurred. Please try again.';
+                btn.disabled = false;
+                btn.textContent = 'Pay $<?= number_format($total, 2) ?>';
             }
         });
     </script>

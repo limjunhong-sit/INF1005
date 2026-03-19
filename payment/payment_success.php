@@ -75,34 +75,94 @@ if (!empty($paymentId)) {
 <!DOCTYPE html>
 <html lang="en">
 <?php include ROOT . '/includes/head.php'; ?>
-<link rel="stylesheet" href="/css/cart.css">
-<link rel="stylesheet" href="/css/payment.css">
 <body>
-    <div class="cart-page">
-        <div class="success-container">
-            <div class="summary-card success-card">
-                <div class="success-icon">
-                    <span>&#10003;</span>
+    <?php include ROOT . '/includes/header.php'; ?>
+    <style>
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .success-wrapper {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .check-icon {
+            font-size: 4rem;
+            color: var(--accent); 
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+        .order-box {
+            background: rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        body.dark-theme .order-box {
+            background: rgba(255,255,255,0.05);
+        }
+    </style>
+
+    <main>
+        <div class="section success-wrapper">
+            <div class="container d-flex justify-content-center">
+                
+                <div class="contact-card text-center p-5 shadow-lg" style="max-width: 500px; width: 100%;">
+                    
+                    <div class="check-icon">&#10003;</div>
+                    
+                    <h2 class="story-heading mb-3">Payment Successful</h2>
+                    <p class="contact-body mb-4">Thank you for your purchase. Your order has been received.</p>
+                    
+                    <?php if ($orderDetails): ?>
+                        <div class="order-box">
+                            <p class="contact-body mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.85rem;">
+                                Order #<?= htmlspecialchars($orderDetails['order_id']) ?>
+                            </p>
+                            <p class="stat-number m-0" style="font-size: 2rem;">
+                                Amount Paid: $<?= number_format($orderDetails['amount'], 2) ?>
+                            </p>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="d-grid gap-3 mt-4 pt-4 border-top border-secondary">
+                        <a href="/cart/purchase_history.php" class="btn btn-dark py-3 fw-bold" style="letter-spacing: 1.5px; text-transform: uppercase;">
+                            View Purchase History
+                        </a>
+                        <a href="/index.php" class="btn btn-outline-dark py-2">
+                            Continue Shopping
+                        </a>
+                    </div>
+
                 </div>
-                <h2 class="success-title">Payment Successful!</h2>
-                <p class="success-text">Thank you for your purchase.</p>
-                <?php if ($orderDetails): ?>
-                    <p class="success-detail">Order #<?= $orderDetails['order_id'] ?></p>
-                    <p class="success-detail" style="margin-bottom: 28px;">
-                        Amount paid: $<?= number_format($orderDetails['amount'], 2) ?>
-                    </p>
-                <?php endif; ?>
-                <a href="/cart/purchase_history.php" class="checkout-btn success-btn" style="margin-bottom: 12px;">
-                    View Purchase History
-                </a>
-                <a href="/index.php" class="shop-btn" style="display:block; text-align:center; margin-top: 4px;">
-                    Continue Shopping
-                </a>
             </div>
         </div>
-    </div>
+    </main>
+
+    <?php include ROOT . '/includes/footer.php'; ?>
+
     <script>
-        // Confetti animation
         function createConfetti() {
             const confettiContainer = document.createElement('div');
             confettiContainer.classList.add('confetti-container');
@@ -118,7 +178,9 @@ if (!empty($paymentId)) {
             }
 
             setTimeout(() => {
-                document.body.removeChild(confettiContainer);
+                if (document.body.contains(confettiContainer)) {
+                    document.body.removeChild(confettiContainer);
+                }
             }, 5000);
         }
 
@@ -128,3 +190,4 @@ if (!empty($paymentId)) {
     </script>
 </body>
 </html>
+

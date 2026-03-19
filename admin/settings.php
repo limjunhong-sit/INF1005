@@ -36,6 +36,38 @@ $currentThreshold = ($dbThreshold !== false) ? (int)$dbThreshold : 5;
     <title>UniClothes — Settings</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        body.dark-theme .settings-card {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #ffffff;
+        }
+
+        body.dark-theme .form-control {
+            background-color: rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .input-group-text {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        body.dark-theme .text-muted {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        body.dark-theme .btn-dark {
+            background-color: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+        body.dark-theme .btn-dark:hover {
+            background-color: #dddddd;
+        }
+    </style>
 </head>
 <body>
 

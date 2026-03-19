@@ -48,6 +48,8 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                     <div class="admin-view-text"> ADMIN VIEW </div>
                 <?php endif; ?>
+
+                
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <button id="themeToggle" class="btn nav-link" title="Toggle Dark Mode">🌓</button>
@@ -55,25 +57,47 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
                     <li class="nav-item">
                         <button class="btn nav-link" type="button" data-bs-toggle="collapse" data-bs-target="#searchSection">🔍</button>
                     </li>
-                    <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/cart/cart.php">Cart</a>
-                        </li>
-                    <?php endif; ?>
 
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                            <li class="nav-item">
-                                <a class="nav-link fw-bold text-primary" href="/admin/">Dashboard</a>
-                            </li>
-                        <?php endif; ?>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" href="/auth/logout.php">Sign Out</a>
-                    </li>
-                <?php else: ?>
-                    <li class="nav-item"><a class="nav-link" href="/register.php">Register</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/signin.php">Sign In</a></li>
-                <?php endif; ?>
+                        <li class="nav-item dropdown ms-2 me-3">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center p-0" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="border: none;">
+                                <img src="https://ui-avatars.com/api/?name=<?= urlencode($_SESSION['first_name'] ?? 'U') ?>&background=9B744A&color=fff&rounded=true&bold=true&length=1" 
+                                    alt="Profile" 
+                                    width="40" height="40" 
+                                    class="rounded-circle shadow-sm"
+                                    style="border: 2px solid var(--accent);">
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="profileDropdown" style="background-color: var(--warm-white); min-width: 200px;">
+                                <li>
+                                    <div class="px-3 py-2">
+                                        <span class="d-block fw-bold" style="color: var(--charcoal); font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; font-size: 1.2rem;">
+                                            <?= strtoupper(htmlspecialchars($_SESSION['first_name'] ?? 'User')) ?>
+                                        </span>
+                                        <span class="d-block small text-muted" style="font-size: 0.8rem;">
+                                            <?= htmlspecialchars($_SESSION['email'] ?? '') ?>
+                                        </span>
+                                    </div>
+                                </li>
+                                <li><hr class="dropdown-divider border-secondary"></li>
+                                
+                                <li><a class="dropdown-item py-2" href="/profile.php">My Profile</a></li>
+                                
+                                <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
+                                    <li><a class="dropdown-item py-2" href="/cart/cart.php">My Cart</a></li>
+                                <?php endif; ?>
+                                
+                                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                                    <li><a class="dropdown-item py-2 fw-bold text-primary" href="/admin/dashboard.php">Dashboard</a></li>
+                                <?php endif; ?>
+                                
+                                <li><hr class="dropdown-divider border-secondary"></li>
+                                <li><a class="dropdown-item py-2 text-danger fw-bold" href="/auth/logout.php">Sign Out</a></li>
+                            </ul>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item ms-2"><a class="nav-link" href="/register.php">Register</a></li>
+                        <li class="nav-item ms-2"><a class="nav-link" href="/signin.php">Sign In</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
