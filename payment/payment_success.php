@@ -11,6 +11,11 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    header("Location: /admin/dashboard.php");
+    exit;
+}
+
 $paymentId = htmlspecialchars($_GET['payment_id'] ?? '', ENT_QUOTES, 'UTF-8');
 $userId = (int)$_SESSION['user_id'];
 $orderDetails = null;

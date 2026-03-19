@@ -17,6 +17,12 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Admins cannot purchase
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    echo json_encode(['error' => 'Admins cannot place orders.']);
+    exit;
+}
+
 // Get input
 $input = json_decode(file_get_contents('php://input'), true);
 

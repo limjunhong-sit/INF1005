@@ -41,12 +41,10 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
                             <li><a class="dropdown-item" href="/shop.php?dept=Women&cat=Accessories">Accessories</a></li>
                         </ul>
                     </li>
-                    <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
-                        <li class="nav-item"><a class="nav-link" href="/about.php">About Us</a></li>
-                    <?php endif; ?>
+                    <li class="nav-item"><a class="nav-link" href="/about.php">About Us</a></li>
                 </ul>
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                    <div class="admin-view-text"> ADMIN VIEW </div>
+                    <div class="admin-view-text"> VIEWING AS CUSTOMER </div>
                 <?php endif; ?>
 
                 

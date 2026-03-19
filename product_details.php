@@ -1,8 +1,10 @@
 <?php
 require_once __DIR__ . '/config/paths.php';
 require_once ROOT . '/config/db_connect.php';
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 $product_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 if (!$product_id) {
     header("Location: index.php");
     exit;
@@ -107,10 +109,17 @@ $colours = array_values(array_unique(array_filter(array_column($variants, 'colou
 
                         <?php include ROOT . '/includes/color.php'; ?>
 
+                        <?php if ($isAdmin): ?>
+                        <button type="button" class="btn btn-secondary btn-lg px-5 w-100 w-md-auto" disabled>
+                            You are currently in an admin's account
+                        </button>
+                        <?php else: ?>
                         <button type="submit" class="btn btn-dark btn-lg px-5 w-100 w-md-auto" id="addToCartBtn">
                             Add to Cart
                         </button>
+                        <?php endif; ?>
                     </form>
+                    <?php if (!$isAdmin): ?>
                     <script>
                     (function() {
                         var variants = <?php echo json_encode($variants); ?>;
@@ -128,9 +137,9 @@ $colours = array_values(array_unique(array_filter(array_column($variants, 'colou
                             var v = variantMap[key];
                             if (v) {
                                 variantIdInput.value = v.variant_id;
-                                addToCartBtn.disabled = parseInt(v.stock_quantity) <= 0;
+                                if (addToCartBtn) addToCartBtn.disabled = parseInt(v.stock_quantity) <= 0;
                             } else {
-                                addToCartBtn.disabled = true;
+                                if (addToCartBtn) addToCartBtn.disabled = true;
                             }
                         }
 
@@ -139,6 +148,7 @@ $colours = array_values(array_unique(array_filter(array_column($variants, 'colou
                         updateVariantId();
                     })();
                     </script>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>

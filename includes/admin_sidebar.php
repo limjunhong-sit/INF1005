@@ -1,5 +1,8 @@
 <?php
 $currentPage = basename($_SERVER['SCRIPT_NAME']);
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+$adminName = $_SESSION['first_name'] ?? 'Admin';
+$adminInitial = mb_strtoupper(mb_substr($adminName, 0, 1));
 ?>
 
 <aside class="sidebar">
@@ -9,7 +12,7 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
     </div>
     <nav class="sidebar-nav">
         <a href="../index.php" class="nav-link-item">
-            <span class="icon">🏠</span> Homepage
+            <span class="icon">👤</span> View as Customer
         </a>
         <a href="index.php" class="nav-link-item <?php echo ($currentPage === 'index.php') ? 'active' : ''; ?>">
             <span class="icon">👕</span> Products
@@ -32,9 +35,9 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
     </nav>
     <div class="sidebar-footer">
         <div class="admin-badge">
-            <div class="admin-avatar">AD</div>
+            <div class="admin-avatar"><?= htmlspecialchars($adminInitial) ?></div>
             <div class="admin-info">
-                <strong>Admin</strong>
+                <strong><?= htmlspecialchars($adminName) ?></strong>
                 <span>Administrator</span>
             </div>
         </div>

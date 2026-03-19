@@ -23,6 +23,7 @@ body.dark-theme {
     --mid: #a1a1aa;        
     --accent: #d4a373;     
     --accent-light: #423528; 
+    --accent-dim: rgba(212, 163, 115, 0.15);
     --border: #3f3f46;     
 }
 

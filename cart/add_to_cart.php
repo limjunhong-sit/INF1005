@@ -10,6 +10,11 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    header("Location: " . ($_SERVER['HTTP_REFERER'] ?? '/index.php'));
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = (int)$_SESSION['user_id'];
     $variantId = (int)($_POST['variant_id'] ?? 0);

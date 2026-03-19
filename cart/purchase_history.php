@@ -9,6 +9,11 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    header("Location: /admin/dashboard.php");
+    exit;
+}
+
 $userId = (int)$_SESSION['user_id'];
 
 $stmt = $pdo->prepare("

@@ -4,7 +4,12 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 require_once __DIR__ .'/cart_functions.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /register.php");
+    header("Location: /signin.php?redirect=" . urlencode('/cart/cart.php'));
+    exit;
+}
+
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    header("Location: /admin/dashboard.php");
     exit;
 }
 
