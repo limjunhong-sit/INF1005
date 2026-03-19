@@ -42,29 +42,25 @@ $currentThreshold = ($dbThreshold !== false) ? (int)$dbThreshold : 5;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             color: #ffffff;
         }
-
-        body.dark-theme .form-control {
+        body.dark-theme .settings-card .form-control {
             background-color: rgba(0, 0, 0, 0.2) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #ffffff !important;
         }
-
-        body.dark-theme .input-group-text {
+        body.dark-theme .settings-card .input-group-text {
             background-color: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: rgba(255, 255, 255, 0.8) !important;
         }
-
-        body.dark-theme .text-muted {
+        body.dark-theme .settings-card .text-muted {
             color: rgba(255, 255, 255, 0.6) !important;
         }
-
-        body.dark-theme .btn-dark {
+        body.dark-theme .settings-card .btn-dark {
             background-color: #ffffff;
             color: #000000;
             border-color: #ffffff;
         }
-        body.dark-theme .btn-dark:hover {
+        body.dark-theme .settings-card .btn-dark:hover {
             background-color: #dddddd;
         }
     </style>

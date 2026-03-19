@@ -9,7 +9,7 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
     </div>
     <nav class="sidebar-nav">
         <a href="../index.php" class="nav-link-item">
-            <span class="icon">🏠</span> Homepage
+            <span class="icon">🏠</span> Customer's View
         </a>
         <a href="index.php" class="nav-link-item <?php echo ($currentPage === 'index.php') ? 'active' : ''; ?>">
             <span class="icon">👕</span> Products
@@ -22,6 +22,9 @@ $currentPage = basename($_SERVER['SCRIPT_NAME']);
         </a>
         <a href="settings.php" class="nav-link-item <?php echo ($currentPage === 'settings.php') ? 'active' : ''; ?>">
             <span class="icon">⚙️</span> Settings
+        </a>
+        <a href="manage_admins.php" class="nav-link-item <?php echo ($currentPage === 'manage_admins.php') ? 'active' : ''; ?>">
+            <span class="icon">🧑‍💻</span> Admins
         </a>
         <a href="#" id="adminThemeToggle" class="nav-link-item" style="margin-top: 15px;">
             <span class="icon">🌓</span> Dark Mode
