@@ -726,3 +726,75 @@ body.dark-theme .badge-women {
     color: #ffb6d9;
     border-color: rgba(255, 142, 197, 0.3);
 }
+
+/* Variants section – use theme variables (blends with dark/light mode) */
+.variants-help-text {
+    color: var(--text) !important;
+}
+
+.variants-field-label {
+    color: var(--text) !important;
+    font-weight: 500;
+}
+
+.variants-add-box {
+    background: var(--surface2);
+    border-color: var(--border) !important;
+}
+
+.variants-add-box .form-control,
+.variants-add-box .form-select {
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+    color: var(--text) !important;
+}
+
+.variants-add-box .btn-dark {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #fff !important;
+}
+
+.variants-add-box .btn-dark:hover {
+    opacity: 0.9;
+}
+
+.variants-table-wrap .variants-table,
+.variants-table-wrap .variants-table thead th,
+.variants-table-wrap .variants-table tbody td,
+.variants-table-wrap .variants-table tbody tr {
+    background: var(--surface2);
+    color: var(--text);
+    border-color: var(--border) !important;
+}
+
+.variants-table-wrap .variants-table thead th {
+    color: var(--text-muted);
+}
+
+.variants-table-wrap .variants-table .form-control,
+.variants-table-wrap .variants-table .form-select {
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
+    color: var(--text) !important;
+}
+
+.variants-table-wrap .variants-table .btn-outline-dark {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.variants-table-wrap .variants-table .btn-outline-dark:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.variants-table-wrap .variants-table .btn-outline-danger {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.variants-table-wrap .variants-table .btn-outline-danger:hover {
+    background: var(--danger-dim);
+}

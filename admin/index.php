@@ -242,12 +242,12 @@ try {
                 <div id="variantsSection" class="form-group">
                     <hr class="my-4">
                     <label class="fw-bold mb-2">Size / Colour Variants</label>
-                    <p class="text-muted small mb-3">Manage different sizes and colours for this product. Each variant has its own stock.</p>
-                    <div class="mb-3 p-3 border rounded" style="background: #f8f9fa;">
+                    <p class="variants-help-text small mb-3">Manage different sizes and colours for this product. Each variant has its own stock.</p>
+                    <div class="variants-add-box mb-3 p-3 border rounded">
                         <label class="small fw-semibold mb-2 d-block">Add New Variant</label>
                         <div class="d-flex flex-wrap gap-2 align-items-end">
                             <div>
-                                <label class="small text-muted d-block">Size</label>
+                                <label class="variants-field-label small d-block">Size</label>
                                 <select id="newVariantSize" class="form-select form-select-sm" style="width: 120px;">
                                     <option value="">— Select —</option>
                                     <option value="XS">XS</option>
@@ -262,7 +262,7 @@ try {
                                 <input type="text" id="newVariantSizeCustom" class="form-control form-control-sm mt-1" placeholder="Custom size" style="width: 120px; display: none;">
                             </div>
                             <div>
-                                <label class="small text-muted d-block">Colour</label>
+                                <label class="variants-field-label small d-block">Colour</label>
                                 <select id="newVariantColour" class="form-select form-select-sm" style="width: 120px;">
                                     <option value="">— Select —</option>
                                     <option value="Black">Black</option>
@@ -283,14 +283,14 @@ try {
                                 <input type="text" id="newVariantColourCustom" class="form-control form-control-sm mt-1" placeholder="Custom colour" style="width: 120px; display: none;">
                             </div>
                             <div>
-                                <label class="small text-muted d-block">Stock</label>
+                                <label class="variants-field-label small d-block">Stock</label>
                                 <input type="number" id="newVariantStock" class="form-control form-control-sm" min="0" value="0" style="width: 80px;">
                             </div>
                             <button type="button" class="btn btn-sm btn-dark" id="addVariantBtn">Add Variant</button>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-bordered">
+                    <div class="table-responsive variants-table-wrap">
+                        <table class="table table-sm table-bordered variants-table">
                             <thead><tr><th>Size</th><th>Colour</th><th>Stock</th><th>Actions</th></tr></thead>
                             <tbody id="variantsTableBody"></tbody>
                             <tbody id="variantsToAddBody"></tbody>
