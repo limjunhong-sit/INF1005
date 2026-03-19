@@ -1,12 +1,8 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') { //admin check
-    header("Location: ../signin.php");
-    exit();
-}
 require_once __DIR__ . '/../config/paths.php';
 require_once ROOT . '/config/db_connect.php';
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+include ROOT . '/config/admin_timeout.php';
 
 $totalProducts = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
 $menItems = $pdo->query("SELECT COUNT(*) FROM products p JOIN categories c ON p.category_id = c.category_id WHERE c.department = 'Men'")->fetchColumn();
@@ -19,7 +15,6 @@ $stmt = $pdo->prepare("SELECT COUNT(*) FROM products WHERE stock_quantity < ?");
 $stmt->execute([$threshold]);
 $lowStock = $stmt->fetchColumn();
 
-// Load products for the table
 $sql = "SELECT p.*, c.name as cat_name, c.department 
         FROM products p 
         JOIN categories c ON p.category_id = c.category_id 
@@ -27,7 +22,6 @@ $sql = "SELECT p.*, c.name as cat_name, c.department
 $stmt = $pdo->query($sql);
 $products = $stmt->fetchAll();
 
-// Load all categories to drive dynamic category dropdowns
 $catStmt = $pdo->query("SELECT department, name FROM categories ORDER BY department, name");
 $categoriesByDept = [];
 while ($row = $catStmt->fetch(PDO::FETCH_ASSOC)) {
@@ -38,7 +32,6 @@ while ($row = $catStmt->fetch(PDO::FETCH_ASSOC)) {
     $categoriesByDept[$dept][] = $row['name'];
 }
 
-// Enforce desired order/allowed categories for Women in the admin UI
 $womenOrder = ['Tops', 'Dresses', 'Jackets', 'Skirts', 'Accessories'];
 if (!empty($categoriesByDept['Women'])) {
     $categoriesByDept['Women'] = array_values(
@@ -59,7 +52,6 @@ if (!empty($categoriesByDept['Women'])) {
 <body>
 
 <script>
-    // Expose category list from database to admin.js
     window.categoryMap = <?php echo json_encode($categoriesByDept); ?>;
 </script>
 

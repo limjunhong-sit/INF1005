@@ -8,7 +8,6 @@ $dept = isset($_GET['dept']) ? $_GET['dept'] : '';
 $cat = isset($_GET['cat']) ? $_GET['cat'] : '';
 $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
 
-// 2. Start building the SQL query
 $sql = "SELECT p.product_id, p.name, p.price, p.image_url 
         FROM products p
         JOIN categories c ON p.category_id = c.category_id

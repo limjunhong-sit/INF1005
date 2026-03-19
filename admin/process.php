@@ -1,14 +1,8 @@
 <?php
-// 1. Start session BEFORE any output
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
-
-// 2. Fixed Security Check: Added isset() to prevent errors
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') { 
-    exit('Unauthorized access.'); 
-}
-
 require_once __DIR__ . '/../config/paths.php';
 require_once ROOT . '/config/db_connect.php';
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+include ROOT . '/config/admin_timeout.php';
 
 $action = $_POST['action'] ?? '';
 

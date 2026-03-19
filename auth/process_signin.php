@@ -43,7 +43,11 @@ if (empty($email) || empty($pwd)) {
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role'];
 
-            header('Location: ../index.php');
+            if ($_SESSION['role'] === 'admin') {
+                header('Location: ../admin/analytics.php'); 
+            } else {
+                header('Location: ../index.php');
+            }
             exit;
         } else {
             $errorMsg = "Invalid email or password.";

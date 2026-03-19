@@ -57,6 +57,7 @@ header nav.navbar {
 
 main {
     flex: 1; 
+    overflow: visible !important;
 }
 
 footer {
@@ -201,6 +202,11 @@ footer {
 
 .section {
     padding: 100px 60px;
+    overflow: visible !important;
+}
+
+.container {
+    overflow: visible !important;
 }
 
 .section-tag {
@@ -221,6 +227,7 @@ footer {
     grid-template-columns: 1fr 1.6fr;
     gap: 80px;
     align-items: start;
+    overflow: visible !important;
 }
 
 .story-heading {
@@ -557,7 +564,7 @@ body.dark-theme .btn-primary {
 
 
 header.sticky-top {
-    z-index: 1030; 
+    z-index: 2000 !important; 
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
@@ -565,3 +572,43 @@ body.dark-theme header.sticky-top {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); 
 }
 
+body.dark-theme .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.1); 
+}
+
+body.dark-theme .navbar-toggler-icon {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+
+body.dark-theme .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.25rem rgba(155, 116, 74, 0.25);
+}
+
+@media (min-width: 992px) {
+    .admin-view-text {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        
+        font-family: 'Jost', sans-serif;
+        font-weight: 500;
+        font-size: 1.25rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--accent); 
+        pointer-events: none;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 991px) {
+    .admin-view-text {
+        text-align: center;
+        padding: 10px 0;
+        color: var(--accent);
+        letter-spacing: 2px;
+        font-size: 0.7rem;
+    }
+}

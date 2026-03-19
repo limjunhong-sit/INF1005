@@ -2,9 +2,11 @@
 header("X-Content-Type-Options: nosniff");
 header("X-Frame-Options: DENY");
 header("X-XSS-Protection: 1; mode=block"); 
+session_set_cookie_params(0);
 if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
+
 <header class="sticky-top">
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
         <div class="container-fluid">
             <a class="navbar-brand" href="/index.php">
                 <img src="/image/ecommerce_logo.png" alt="" width="40" height="30" class="rounded-circle">UniClothes
@@ -39,8 +41,13 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
                             <li><a class="dropdown-item" href="/shop.php?dept=Women&cat=Accessories">Accessories</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="about.php">About Us</a></li>
+                    <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
+                        <li class="nav-item"><a class="nav-link" href="/about.php">About Us</a></li>
+                    <?php endif; ?>
                 </ul>
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                    <div class="admin-view-text"> ADMIN VIEW </div>
+                <?php endif; ?>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <button id="themeToggle" class="btn nav-link" title="Toggle Dark Mode">🌓</button>
