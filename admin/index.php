@@ -298,9 +298,24 @@ try {
                     </div>
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group position-relative" id="imageFormGroup">
                     <label>Image</label>
-                    <input type="file" name="image" id="productImage" accept="image/*">
+                    <input type="file" name="image" id="productImage" accept="image/*" class="image-file-input-hidden">
+                    <div id="imageAddState">
+                        <button type="button" class="btn btn-sm btn-outline-dark" id="addImageBtn">Choose file</button>
+                        <span class="small text-muted ms-2" id="addFileName">No file chosen</span>
+                    </div>
+                    <div id="imageEditState" style="display: none;">
+                        <div class="image-current-wrap mb-3">
+                            <p class="small text-muted mb-1">Current image</p>
+                            <img id="productImagePreview" src="" alt="Current product" class="img-fluid rounded image-preview-thumb image-preview-clickable" role="button" tabindex="0">
+                        </div>
+                        <div class="image-replace-wrap">
+                            <label class="small fw-semibold d-block mb-1">Replace image</label>
+                            <button type="button" class="btn btn-sm btn-outline-dark" id="replaceImageBtn">Choose file</button>
+                            <span class="small text-muted ms-2" id="replaceFileName">No file chosen</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
@@ -314,6 +329,10 @@ try {
             </div>
         </form>
     </div>
+</div>
+
+<div class="image-expand-overlay" id="imageExpandOverlay" role="button" tabindex="-1" aria-label="Close expanded image">
+    <img id="imageExpandImg" src="" alt="Expanded product image">
 </div>
 
 <div class="modal-overlay" id="deleteModal">

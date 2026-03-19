@@ -5,11 +5,16 @@ function openAddModal() {
     document.getElementById('productName').value = '';
     document.getElementById('productPrice').value = '';
     document.getElementById('productStock').value = '0';
-    document.getElementById('productImage').value = '';
+    var imgInput = document.getElementById('productImage');
+    if (imgInput) { imgInput.value = ''; }
+    var addFileName = document.getElementById('addFileName');
+    if (addFileName) addFileName.textContent = 'No file chosen';
     document.getElementById('productDesc').value = '';
     document.getElementById('productDept').value = '';
     document.getElementById('productStockGroup').style.display = '';
     document.getElementById('variantsSection').style.display = 'block';
+    document.getElementById('imageAddState').style.display = '';
+    document.getElementById('imageEditState').style.display = 'none';
     document.getElementById('variantsTableBody').innerHTML = '<tr><td colspan="4" class="text-muted small">Add variants below, or leave empty to use Stock for one default variant.</td></tr>';
     var toAdd = document.getElementById('variantsToAddBody');
     if (toAdd) toAdd.innerHTML = '';
@@ -30,6 +35,16 @@ function openEditModal(id, name, price, dept, category, stock, desc, img) {
     if (fileInput) fileInput.value = '';
     document.getElementById('productStockGroup').style.display = 'none';
     document.getElementById('variantsSection').style.display = 'block';
+    document.getElementById('imageAddState').style.display = 'none';
+    document.getElementById('imageEditState').style.display = '';
+    var preview = document.getElementById('productImagePreview');
+    var replaceName = document.getElementById('replaceFileName');
+    if (preview) {
+        var imgSrc = img ? (img.indexOf('http') === 0 || img.indexOf('../') === 0 ? img : '../' + img) : '';
+        preview.src = imgSrc;
+        preview.alt = name || 'Current product';
+    }
+    if (replaceName) replaceName.textContent = 'No file chosen';
     document.getElementById('variantsToAddBody').innerHTML = '';
     populateCategories(dept, category);
     document.getElementById('productModal').classList.add('show');
@@ -145,6 +160,58 @@ function deleteVariant(variantId, row) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    var productImageInput = document.getElementById('productImage');
+    var addImageBtn = document.getElementById('addImageBtn');
+    var replaceImageBtn = document.getElementById('replaceImageBtn');
+    var addFileName = document.getElementById('addFileName');
+    var replaceFileName = document.getElementById('replaceFileName');
+
+    if (addImageBtn && productImageInput) {
+        addImageBtn.addEventListener('click', function() { productImageInput.click(); });
+    }
+    if (replaceImageBtn && productImageInput) {
+        replaceImageBtn.addEventListener('click', function() { productImageInput.click(); });
+    }
+    var objectUrlRevoke = null;
+    if (productImageInput) {
+        productImageInput.addEventListener('change', function() {
+            var name = this.files && this.files.length ? this.files[0].name : 'No file chosen';
+            if (addFileName) addFileName.textContent = name;
+            if (replaceFileName) replaceFileName.textContent = name;
+            var preview = document.getElementById('productImagePreview');
+            if (preview && this.files && this.files.length) {
+                if (objectUrlRevoke) URL.revokeObjectURL(objectUrlRevoke);
+                objectUrlRevoke = URL.createObjectURL(this.files[0]);
+                preview.src = objectUrlRevoke;
+            }
+        });
+    }
+
+    var previewImg = document.getElementById('productImagePreview');
+    var expandOverlay = document.getElementById('imageExpandOverlay');
+    var expandImg = document.getElementById('imageExpandImg');
+    function openImageExpand() {
+        if (!previewImg || !previewImg.src) return;
+        expandImg.src = previewImg.src;
+        expandImg.alt = previewImg.alt || 'Product image';
+        expandOverlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        expandOverlay.focus();
+    }
+    function closeImageExpand() {
+        expandOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+    if (previewImg && expandOverlay && expandImg) {
+        previewImg.addEventListener('click', openImageExpand);
+        previewImg.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openImageExpand(); } });
+        expandOverlay.addEventListener('click', closeImageExpand);
+        expandImg.addEventListener('click', function(e) { e.stopPropagation(); });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && expandOverlay.classList.contains('show')) closeImageExpand();
+        });
+    }
+
     const sizeSelect = document.getElementById('newVariantSize');
     const sizeCustom = document.getElementById('newVariantSizeCustom');
     const colourSelect = document.getElementById('newVariantColour');

@@ -51,6 +51,11 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
 
                 
                 <ul class="navbar-nav ms-auto">
+                    <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="/cart/cart.php" title="Cart">🛒 Cart</a>
+                    </li>
+                    <?php endif; ?>
                     <li class="nav-item">
                         <button id="themeToggle" class="btn nav-link" title="Toggle Dark Mode">🌓</button>
                     </li>
