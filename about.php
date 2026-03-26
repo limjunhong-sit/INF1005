@@ -39,7 +39,7 @@
                         <p>UniClothes was born from a simple observation: university students deserve 
                         clothing that keeps up with their lives — from lecture halls to weekend hangouts
                         — without breaking the bank.</p>
-                        <p>We offer acurated range of casual campus-style apparel including hoodies, 
+                        <p>We offer accurated range of casual campus-style apparel including hoodies, 
                         jackets, and t-shirts designed for everyday wear. Every piece reflects the lifestyle 
                         and personality of students, both on and off campus.</p>
                         <p>Based in Singapore, we aim to grow into a trusted campus fashion brand recognised 
