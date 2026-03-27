@@ -1,9 +1,27 @@
 <?php
 header("X-Content-Type-Options: nosniff");
 header("X-Frame-Options: DENY");
-header("X-XSS-Protection: 1; mode=block"); 
-session_set_cookie_params(0);
-if (session_status() === PHP_SESSION_NONE) { session_start(); } ?>
+header("X-XSS-Protection: 1; mode=block");
+if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params(0);
+    session_start();
+}
+
+if (isset($_SESSION['user_id'])) {
+    require_once __DIR__ . '/../config/paths.php';
+    require_once ROOT . '/config/db_connect.php';
+    $stmt = $pdo->prepare("SELECT session_id FROM users WHERE user_id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $sessionCheck = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($sessionCheck && $sessionCheck['session_id'] !== session_id()) {
+        session_unset();
+        session_destroy();
+        header("Location: /signin.php?msg=signed_out");
+        exit;
+    }
+}
+?>
 
 <header class="sticky-top">
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">

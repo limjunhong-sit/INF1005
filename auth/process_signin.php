@@ -20,7 +20,6 @@ if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
 $success = true;
 $errorMsg = "";
 
-
 $email = trim($_POST['email'] ?? '');
 $pwd = $_POST['pwd'] ?? '';
 
@@ -29,35 +28,43 @@ if (empty($email) || empty($pwd)) {
     $success = false;
 } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errorMsg = "Please enter a valid email address.";
-    $success = false; 
+    $success = false;
 } else {
     try {
-        $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, email, password, role FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT user_id, first_name, last_name, email, password, role, session_id FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($pwd, $user['password'])) {
-            session_regenerate_id(true);
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['first_name'] = $user['first_name'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['role'] = $user['role'];
-
-            if ($_SESSION['role'] === 'admin') {
-                header('Location: ../admin/analytics.php');
-            } elseif (!empty($_POST['redirect']) && strpos($_POST['redirect'], '/') === 0) {
-                header('Location: ../' . ltrim($_POST['redirect'], '/'));
+            if (!empty($user['session_id'])) {
+                $errorMsg = "This account is already logged in on another device. Please try again later.";
+                $success = false;
             } else {
-                header('Location: ../index.php');
+                session_regenerate_id(true);
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['first_name'] = $user['first_name'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['role'] = $user['role'];
+
+                $stmt = $pdo->prepare("UPDATE users SET session_id = ? WHERE user_id = ?");
+                $stmt->execute([session_id(), $user['user_id']]);
+
+                if ($_SESSION['role'] === 'admin') {
+                    header('Location: ../admin/analytics.php');
+                } elseif (!empty($_POST['redirect']) && strpos($_POST['redirect'], '/') === 0) {
+                    header('Location: ../' . ltrim($_POST['redirect'], '/'));
+                } else {
+                    header('Location: ../index.php');
+                }
+                exit;
             }
-            exit;
         } else {
             $errorMsg = "Invalid email or password.";
             $success = false;
         }
     } catch (PDOException $e) {
         $errorMsg = "An unexpected error occurred. Please try again later.";
-        error_log("Database error: " . $e->getMessage()); // Log the error instead of showing it to the user
+        error_log("Database error: " . $e->getMessage());
         $success = false;
     }
 }
@@ -72,7 +79,7 @@ if (empty($email) || empty($pwd)) {
                 <div class="alert alert-danger" role="alert">
                     <h4>Sign In Failed</h4>
                     <p><?php echo htmlspecialchars($errorMsg); ?></p>
-                    <a href="signin.php" class="btn btn-dark">Try again</a>
+                    <a href="/signin.php" class="btn btn-dark">Try again</a>
                 </div>
             <?php endif; ?>
         </main>

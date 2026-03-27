@@ -14,7 +14,7 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect'], ENT_Q
                 <h2 class="text-center mb-4" style="font-family: 'Bebas Neue', serif;">Sign In</h2>
                 <div class="row justify-content-center">
                     <div class="col-md-6">
-                        <form action="auth/process_signin.php" method="POST" class="border rounded p-4 bg-light shadow-sm">
+                        <form action="/auth/process_signin.php" method="POST" class="border rounded p-4 bg-light shadow-sm">
                             <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
                             <?php if ($redirect): ?><input type="hidden" name="redirect" value="<?= $redirect ?>"><?php endif; ?>
                             <div class="mb-3">
