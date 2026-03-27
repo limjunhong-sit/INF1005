@@ -2,14 +2,11 @@
 header("X-Content-Type-Options: nosniff");
 header("X-Frame-Options: DENY");
 header("X-XSS-Protection: 1; mode=block");
-if (session_status() === PHP_SESSION_NONE) {
-    session_set_cookie_params(0);
-    session_start();
-}
+
+require_once __DIR__ . '/../config/paths.php';
+require_once ROOT . '/config/db_connect.php';
 
 if (isset($_SESSION['user_id'])) {
-    require_once __DIR__ . '/../config/paths.php';
-    require_once ROOT . '/config/db_connect.php';
     $stmt = $pdo->prepare("SELECT session_id FROM users WHERE user_id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $sessionCheck = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -62,7 +59,7 @@ if (isset($_SESSION['user_id'])) {
                     <li class="nav-item"><a class="nav-link" href="/about.php">About Us</a></li>
                 </ul>
                 <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-                    <div class="admin-view-text"> VIEWING AS CUSTOMER </div>
+                    <div class="admin-view-text mx-auto px-3 text-center"> VIEWING AS CUSTOMER </div>
                 <?php endif; ?>
 
                 

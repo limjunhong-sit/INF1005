@@ -1,4 +1,9 @@
 <?php
+session_set_cookie_params(0);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // 1. Local Credentials (since PHP and MySQL are on the same machine)
 $host = 'localhost';          // This is the magic word that tells PHP to look inside its own computer
 $dbname = 'UniClothes';       // The exact name of the database

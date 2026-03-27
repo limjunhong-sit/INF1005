@@ -14,6 +14,12 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect'], ENT_Q
                 <h2 class="text-center mb-4" style="font-family: 'Bebas Neue', serif;">Sign In</h2>
                 <div class="row justify-content-center">
                     <div class="col-md-6">
+                        <?php if (isset($_GET['msg']) && $_GET['msg'] === 'signed_out'): ?>
+                            <div class="alert alert-warning alert-dismissible fade show shadow-sm mb-4" role="alert">
+                                <strong>Session Expired!</strong> You have been signed out because your account was accessed from another device.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <?php endif; ?>
                         <form action="/auth/process_signin.php" method="POST" class="border rounded p-4 bg-light shadow-sm">
                             <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
                             <?php if ($redirect): ?><input type="hidden" name="redirect" value="<?= $redirect ?>"><?php endif; ?>

@@ -586,13 +586,18 @@ body.dark-theme .navbar-toggler:focus {
     box-shadow: 0 0 0 0.25rem rgba(155, 116, 74, 0.25);
 }
 
+body.dark-theme .breadcrumb-item.active {
+    color: rgba(255, 255, 255, 0.7) !important;
+    --bs-breadcrumb-item-active-color: rgba(255, 255, 255, 0.7);
+}
+
+body.dark-theme .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.7) !important;
+    --bs-breadcrumb-divider-color: rgba(255, 255, 255, 0.7);
+}
+
 @media (min-width: 992px) {
     .admin-view-text {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        
         font-family: 'Jost', sans-serif;
         font-weight: 500;
         font-size: 1.25rem;

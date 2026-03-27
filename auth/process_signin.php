@@ -36,28 +36,23 @@ if (empty($email) || empty($pwd)) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($pwd, $user['password'])) {
-            if (!empty($user['session_id'])) {
-                $errorMsg = "This account is already logged in on another device. Please try again later.";
-                $success = false;
+            session_regenerate_id(true); 
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['first_name'] = $user['first_name'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
+
+            $stmt = $pdo->prepare("UPDATE users SET session_id = ? WHERE user_id = ?");
+            $stmt->execute([session_id(), $user['user_id']]);
+
+            if ($_SESSION['role'] === 'admin') {
+                header('Location: ../admin/analytics.php');
+            } elseif (!empty($_POST['redirect']) && strpos($_POST['redirect'], '/') === 0) {
+                header('Location: ../' . ltrim($_POST['redirect'], '/'));
             } else {
-                session_regenerate_id(true);
-                $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['first_name'] = $user['first_name'];
-                $_SESSION['email'] = $user['email'];
-                $_SESSION['role'] = $user['role'];
-
-                $stmt = $pdo->prepare("UPDATE users SET session_id = ? WHERE user_id = ?");
-                $stmt->execute([session_id(), $user['user_id']]);
-
-                if ($_SESSION['role'] === 'admin') {
-                    header('Location: ../admin/analytics.php');
-                } elseif (!empty($_POST['redirect']) && strpos($_POST['redirect'], '/') === 0) {
-                    header('Location: ../' . ltrim($_POST['redirect'], '/'));
-                } else {
-                    header('Location: ../index.php');
-                }
-                exit;
+                header('Location: ../index.php');
             }
+            exit;
         } else {
             $errorMsg = "Invalid email or password.";
             $success = false;

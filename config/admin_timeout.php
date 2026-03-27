@@ -8,7 +8,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$timeout_duration = 900; // timeout duration in seconds,currently at 15minutes
+$timeout_duration = 600; // timeout duration in seconds,currently at 10minutes
 
 if (isset($_SESSION['last_activity'])) {
     if ((time() - $_SESSION['last_activity']) >= $timeout_duration) {
