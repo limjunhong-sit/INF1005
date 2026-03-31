@@ -5,6 +5,7 @@ session_start();
 
 require_once __DIR__ . '/../config/paths.php';
 require_once ROOT . '/config/db_connect.php';
+require_once ROOT . '/includes/send_order_confirmation.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: /signin.php");
@@ -24,47 +25,132 @@ if (!empty($paymentId)) {
     try {
         $pdo->beginTransaction();
 
-        // Update payment status to paid
-        $stmt = $pdo->prepare("UPDATE payments SET status = 'paid' WHERE stripe_payment_id = ? AND user_id = ?");
+        // 1. Update payment status to paid
+        $stmt = $pdo->prepare("
+            UPDATE payments
+            SET status = 'paid'
+            WHERE stripe_payment_id = ? AND user_id = ?
+        ");
         $stmt->execute([$paymentId, $userId]);
 
-        // Get the order_id from payment
-        $stmt = $pdo->prepare("SELECT order_id, amount FROM payments WHERE stripe_payment_id = ? AND user_id = ?");
+        // 2. Get payment record and linked order_id
+        $stmt = $pdo->prepare("
+            SELECT order_id, amount
+            FROM payments
+            WHERE stripe_payment_id = ? AND user_id = ?
+            LIMIT 1
+        ");
         $stmt->execute([$paymentId, $userId]);
         $payment = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($payment) {
-            // Update order status to paid
-            $stmt = $pdo->prepare("UPDATE orders SET status = 'paid' WHERE order_id = ? AND user_id = ?");
+            // 3. Update order status to paid
+            $stmt = $pdo->prepare("
+                UPDATE orders
+                SET status = 'paid'
+                WHERE order_id = ? AND user_id = ?
+            ");
             $stmt->execute([$payment['order_id'], $userId]);
 
-            $orderDetails = [
-                'order_id' => $payment['order_id'],
-                'amount' => $payment['amount']
-            ];
-
-            // Update variant stock
+            // 4. Get full order row
             $stmt = $pdo->prepare("
-                SELECT oi.variant_id, oi.quantity
+                SELECT order_id, user_id, total_amount, created_at
+                FROM orders
+                WHERE order_id = ? AND user_id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$payment['order_id'], $userId]);
+            $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // 5. Get user email and name
+            $stmt = $pdo->prepare("
+                SELECT first_name, email
+                FROM users
+                WHERE user_id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // 6. Get order items with product names
+            $stmt = $pdo->prepare("
+                SELECT
+                    oi.variant_id,
+                    oi.quantity,
+                    oi.unit_price AS price,
+                    p.name AS product_name
                 FROM order_items oi
+                JOIN product_variants pv ON oi.variant_id = pv.variant_id
+                JOIN products p ON pv.product_id = p.product_id
                 WHERE oi.order_id = ?
             ");
             $stmt->execute([$payment['order_id']]);
             $orderItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            // 7. Update stock and prepare email items
+            $emailItems = [];
+
             foreach ($orderItems as $item) {
-                $stmt = $pdo->prepare("UPDATE product_variants SET stock_quantity = stock_quantity - ? WHERE variant_id = ? AND stock_quantity >= ?");
-                $stmt->execute([$item['quantity'], $item['variant_id'], $item['quantity']]);
+                $stmt = $pdo->prepare("
+                    UPDATE product_variants
+                    SET stock_quantity = stock_quantity - ?
+                    WHERE variant_id = ? AND stock_quantity >= ?
+                ");
+                $stmt->execute([
+                    $item['quantity'],
+                    $item['variant_id'],
+                    $item['quantity']
+                ]);
+
+                $emailItems[] = [
+                    'name' => $item['product_name'],
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price']
+                ];
+            }
+
+            // 8. Prepare data for on-page display
+            $orderDetails = [
+                'order_id' => $payment['order_id'],
+                'amount' => $payment['amount']
+            ];
+
+            // 9. Send order confirmation email
+            if ($order && $user && !empty($user['email'])) {
+                $orderData = [
+                    'order_id' => $order['order_id'],
+                    'order_date' => $order['created_at'],
+                    'total' => $order['total_amount'],
+                    'items' => $emailItems
+                ];
+
+                $emailSent = sendOrderConfirmationEmail(
+                    $user['email'],
+                    $user['name'] ?? 'Customer',
+                    $orderData
+                );
+
+                if (!$emailSent) {
+                    error_log("Order confirmation email failed for order ID " . $order['order_id']);
+                }
             }
         }
 
-        // Clear cart
-        $stmt = $pdo->prepare("SELECT cart_id FROM cart WHERE user_id = ? LIMIT 1");
+        // 10. Clear cart
+        $stmt = $pdo->prepare("
+            SELECT cart_id
+            FROM cart
+            WHERE user_id = ?
+            LIMIT 1
+        ");
         $stmt->execute([$userId]);
         $cart = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($cart) {
-            $stmt = $pdo->prepare("DELETE FROM cart_items WHERE cart_id = ?");
+            $stmt = $pdo->prepare("
+                DELETE FROM cart_items
+                WHERE cart_id = ?
+            ");
             $stmt->execute([$cart['cart_id']]);
         }
 
