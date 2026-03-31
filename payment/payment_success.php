@@ -25,7 +25,6 @@ if (!empty($paymentId)) {
     try {
         $pdo->beginTransaction();
 
-        // 1. Update payment status to paid
         $stmt = $pdo->prepare("
             UPDATE payments
             SET status = 'paid'
@@ -33,7 +32,7 @@ if (!empty($paymentId)) {
         ");
         $stmt->execute([$paymentId, $userId]);
 
-        // 2. Get payment record and linked order_id
+        
         $stmt = $pdo->prepare("
             SELECT order_id, amount
             FROM payments
@@ -44,7 +43,7 @@ if (!empty($paymentId)) {
         $payment = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($payment) {
-            // 3. Update order status to paid
+            
             $stmt = $pdo->prepare("
                 UPDATE orders
                 SET status = 'paid'
@@ -52,7 +51,7 @@ if (!empty($paymentId)) {
             ");
             $stmt->execute([$payment['order_id'], $userId]);
 
-            // 4. Get full order row
+            
             $stmt = $pdo->prepare("
                 SELECT order_id, user_id, total_amount, created_at
                 FROM orders
@@ -62,7 +61,7 @@ if (!empty($paymentId)) {
             $stmt->execute([$payment['order_id'], $userId]);
             $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // 5. Get user email and name
+            
             $stmt = $pdo->prepare("
                 SELECT first_name, email
                 FROM users
@@ -72,7 +71,7 @@ if (!empty($paymentId)) {
             $stmt->execute([$userId]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            // 6. Get order items with product names
+            
             $stmt = $pdo->prepare("
                 SELECT
                     oi.variant_id,
@@ -87,7 +86,7 @@ if (!empty($paymentId)) {
             $stmt->execute([$payment['order_id']]);
             $orderItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // 7. Update stock and prepare email items
+            
             $emailItems = [];
 
             foreach ($orderItems as $item) {
@@ -109,13 +108,11 @@ if (!empty($paymentId)) {
                 ];
             }
 
-            // 8. Prepare data for on-page display
             $orderDetails = [
                 'order_id' => $payment['order_id'],
                 'amount' => $payment['amount']
             ];
 
-            // 9. Send order confirmation email
             if ($order && $user && !empty($user['email'])) {
                 $orderData = [
                     'order_id' => $order['order_id'],
@@ -135,8 +132,6 @@ if (!empty($paymentId)) {
                 }
             }
         }
-
-        // 10. Clear cart
         $stmt = $pdo->prepare("
             SELECT cart_id
             FROM cart

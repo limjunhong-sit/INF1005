@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productId = (int)($_POST['product_id'] ?? 0);
 
     if ($variantId <= 0 && $productId > 0) {
-        // Fallback: use first variant when only product_id is sent (e.g. legacy link)
+        // Fallback: use first variant when only product_id is sent 
         $stmt = $pdo->prepare("SELECT variant_id FROM product_variants WHERE product_id = ? ORDER BY variant_id LIMIT 1");
         $stmt->execute([$productId]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
