@@ -110,7 +110,15 @@ $uploadDir = ROOT . '/uploads/reviews/';
 $relativeUploadDir = 'uploads/reviews/';
 
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0755, true);
+    if (!@mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+        error_log('Review upload mkdir failed for: ' . $uploadDir);
+        redirect_back($productId, ['review_err' => safe_query_message('Server cannot create uploads folder. Please contact support.')]);
+    }
+}
+
+if (!is_writable($uploadDir)) {
+    error_log('Review upload dir not writable: ' . $uploadDir);
+    redirect_back($productId, ['review_err' => safe_query_message('Uploads folder is not writable. Please fix folder permissions.')]);
 }
 
 function normalize_files_array($files) {
@@ -156,26 +164,57 @@ try {
     if (!empty($images)) {
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $stmtImg = $pdo->prepare("INSERT INTO product_review_images (review_id, image_url, created_at) VALUES (?, ?, NOW())");
+        $savedImages = 0;
+        $firstError = '';
 
         foreach ($images as $img) {
-            if ((int)$img['error'] !== UPLOAD_ERR_OK) {
+            $err = (int)($img['error'] ?? UPLOAD_ERR_NO_FILE);
+            if ($err !== UPLOAD_ERR_OK) {
+                if ($firstError === '') {
+                    // Map common upload errors to user-friendly text
+                    switch ($err) {
+                        case UPLOAD_ERR_INI_SIZE:
+                        case UPLOAD_ERR_FORM_SIZE:
+                            $firstError = 'One of your images is too large.';
+                            break;
+                        case UPLOAD_ERR_PARTIAL:
+                            $firstError = 'Image upload was interrupted. Please try again.';
+                            break;
+                        case UPLOAD_ERR_NO_TMP_DIR:
+                            $firstError = 'Server missing a temp folder for uploads.';
+                            break;
+                        case UPLOAD_ERR_CANT_WRITE:
+                            $firstError = 'Server cannot write uploaded files.';
+                            break;
+                        case UPLOAD_ERR_EXTENSION:
+                            $firstError = 'Upload blocked by a server extension.';
+                            break;
+                        default:
+                            $firstError = 'Image upload failed. Please try again.';
+                            break;
+                    }
+                }
                 continue;
             }
             if ((int)$img['size'] <= 0 || (int)$img['size'] > $maxBytesPerImage) {
+                if ($firstError === '') $firstError = 'One of your images is too large (max 2MB each).';
                 continue;
             }
             if (!is_uploaded_file($img['tmp_name'])) {
+                if ($firstError === '') $firstError = 'Image upload failed. Please try again.';
                 continue;
             }
 
             $originalName = basename((string)$img['name']);
             $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
             if (!in_array($ext, $allowedExts, true)) {
+                if ($firstError === '') $firstError = 'Only JPG, PNG, or WEBP images are allowed.';
                 continue;
             }
 
             $mime = $finfo->file($img['tmp_name']);
             if (!in_array($mime, $allowedMimes, true)) {
+                if ($firstError === '') $firstError = 'Only JPG, PNG, or WEBP images are allowed.';
                 continue;
             }
 
@@ -184,10 +223,22 @@ try {
             $targetPath = $uploadDir . $filename;
 
             if (!move_uploaded_file($img['tmp_name'], $targetPath)) {
+                $lastErr = error_get_last();
+                error_log('Review image move failed. tmp=' . ($img['tmp_name'] ?? '') . ' target=' . $targetPath . ' err=' . json_encode($lastErr));
+                if ($firstError === '') $firstError = 'Server could not save your image. Please try again.';
                 continue;
             }
 
             $stmtImg->execute([$reviewId, $relativeUploadDir . $filename]);
+            $savedImages++;
+        }
+
+        // If user selected images but none saved, surface a helpful error
+        if ($savedImages === 0) {
+            // Keep the review itself, but tell user why images didn't attach
+            if ($firstError === '') $firstError = 'Could not attach images. Please try again.';
+            $pdo->commit();
+            redirect_back($productId, ['review_ok' => safe_query_message('Review submitted.'), 'review_err' => safe_query_message($firstError)]);
         }
     }
 

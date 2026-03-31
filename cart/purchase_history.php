@@ -35,6 +35,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 foreach ($orders as &$order) {
     $stmt = $pdo->prepare("
         SELECT
+            pr.product_id,
             oi.quantity,
             oi.unit_price,
             pr.name,
@@ -101,7 +102,7 @@ unset($order);
 
                     <div class="order-items-list">
                         <?php foreach ($order['items'] as $item): ?>
-                            <div class="order-item-row">
+                            <a class="order-item-row text-decoration-none" href="/product_details.php?id=<?= (int)$item['product_id'] ?>">
                                 <img
                                     src="/<?= htmlspecialchars($item['image_url']) ?>"
                                     alt="<?= htmlspecialchars($item['name']) ?>"
@@ -113,7 +114,7 @@ unset($order);
                                 <span class="order-item-price">
                                     $<?= number_format($item['unit_price'] * $item['quantity'], 2) ?>
                                 </span>
-                            </div>
+                            </a>
                         <?php endforeach; ?>
                     </div>
 

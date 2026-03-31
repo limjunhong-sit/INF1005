@@ -161,17 +161,18 @@ try {
                         $rounded = (int)round($avg);
                     ?>
                     <span class="small text-muted">Rating</span>
-                    <span class="small" aria-label="Average rating <?php echo number_format($avg, 1); ?> out of 5">
+                    <span class="small fw-semibold"><?php echo htmlspecialchars(number_format($avg, 1)); ?></span>
+                    <span class="small rating-stars" aria-label="Average rating <?php echo number_format($avg, 1); ?> out of 5">
                         <?php for ($i = 1; $i <= 5; $i++): ?>
                             <?php if ($i <= $rounded): ?>
-                                <span style="color:#111;">&#9733;</span>
+                                <span class="star star-filled">&#9733;</span>
                             <?php else: ?>
-                                <span style="color:#bbb;">&#9733;</span>
+                                <span class="star star-empty">&#9733;</span>
                             <?php endif; ?>
                         <?php endfor; ?>
                     </span>
                     <a class="small text-decoration-none" href="#reviews">
-                        <?php echo htmlspecialchars(number_format($avg, 1)); ?> (<?php echo $count; ?>)
+                        (<?php echo $count; ?>)
                     </a>
                 </div>
                 
@@ -383,12 +384,12 @@ try {
                                         <div class="fw-semibold"><?php echo htmlspecialchars($name); ?></div>
                                         <div class="small text-muted"><?php echo htmlspecialchars($created); ?></div>
                                     </div>
-                                    <div class="small" aria-label="Rating <?php echo $rRating; ?> out of 5">
+                                    <div class="small rating-stars" aria-label="Rating <?php echo $rRating; ?> out of 5">
                                         <?php for ($i = 1; $i <= 5; $i++): ?>
                                             <?php if ($i <= $rRating): ?>
-                                                <span style="color:#111;">&#9733;</span>
+                                                <span class="star star-filled">&#9733;</span>
                                             <?php else: ?>
-                                                <span style="color:#bbb;">&#9733;</span>
+                                                <span class="star star-empty">&#9733;</span>
                                             <?php endif; ?>
                                         <?php endfor; ?>
                                     </div>
@@ -399,9 +400,18 @@ try {
                                 <?php if (!empty($imgs)): ?>
                                     <div class="mt-3 d-flex flex-wrap gap-2">
                                         <?php foreach ($imgs as $url): ?>
-                                            <a href="/<?php echo htmlspecialchars($url); ?>" target="_blank" rel="noopener noreferrer">
+                                            <?php
+                                                $url = (string)$url;
+                                                $publicPath = '/' . ltrim($url, '/');
+                                                $cacheBuster = '';
+                                                $diskPath = ROOT . '/' . ltrim($url, '/');
+                                                if (is_file($diskPath)) {
+                                                    $cacheBuster = '?v=' . (string)filemtime($diskPath);
+                                                }
+                                            ?>
+                                            <a href="<?php echo htmlspecialchars($publicPath); ?>" target="_blank" rel="noopener noreferrer">
                                                 <img
-                                                    src="/<?php echo htmlspecialchars($url); ?>"
+                                                    src="<?php echo htmlspecialchars($publicPath . $cacheBuster); ?>"
                                                     alt="Review image"
                                                     style="width: 84px; height: 84px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,0,0,0.1);">
                                             </a>
