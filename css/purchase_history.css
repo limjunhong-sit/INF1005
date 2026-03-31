@@ -204,3 +204,17 @@
         gap: 16px;
     }
 }
+
+/* Dark mode contrast fixes (Purchase History footer) */
+body.dark-theme .order-footer {
+    background: rgba(255, 255, 255, 0.06);
+    border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+body.dark-theme .order-shipping {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+body.dark-theme .order-shipping span {
+    color: rgba(255, 255, 255, 0.92);
+}

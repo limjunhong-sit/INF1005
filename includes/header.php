@@ -101,6 +101,7 @@ if (isset($_SESSION['user_id'])) {
                                 <li><a class="dropdown-item py-2" href="/profile.php">My Profile</a></li>
                                 
                                 <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin'): ?>
+                                    <li><a class="dropdown-item py-2" href="/cart/purchase_history.php">Purchase History</a></li>
                                     <li><a class="dropdown-item py-2" href="/cart/cart.php">My Cart</a></li>
                                 <?php endif; ?>
                                 
