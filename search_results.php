@@ -22,7 +22,7 @@ if ($user_search !== '') {
 
     <main class="container my-5">
         <div class="mb-5 text-center">
-            <h2 class="fw-bold">Search Results</h2>
+            <h1 class="fw-bold">Search Results</h1>
             <p class="text-muted">Showing results for: <strong>"<?php echo htmlspecialchars($user_search); ?>"</strong></p>
         </div>
         <?php if (count($products) > 0): ?>
@@ -34,7 +34,7 @@ if ($user_search !== '') {
                                 <img src="<?php echo htmlspecialchars($item['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($item['name']); ?>" style="object-fit: cover; height: 300px; background-color: #f8f9fa;">
                             </a>
                             <div class="card-body text-center">
-                                <h5 class="card-title fs-6 text-dark"><?php echo htmlspecialchars($item['name']); ?></h5>
+                                <p class="card-title fs-6 text-dark"><?php echo htmlspecialchars($item['name']); ?></p>
                                 <p class="card-text fw-bold">$<?php echo number_format($item['price'], 2); ?></p>
                                 <a href="product_details.php?id=<?php echo $item['product_id']; ?>" class="btn btn-outline-dark w-100">View Details</a>
                             </div>
@@ -46,7 +46,7 @@ if ($user_search !== '') {
         <?php else: ?>
             <div class="text-center py-5">
                 <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
-                <h4 class="mt-3">No products found</h4>
+                <p class="mt-3">No products found</p>
                 <p class="text-muted">Try searching for something else, like "Tee" or "Hoodie".</p>
                 <a href="index.php" class="btn btn-dark mt-3">Continue Shopping</a>
             </div>
