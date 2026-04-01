@@ -377,7 +377,7 @@ if (filterDeptSelect && filterCatSelect) {
         if (selectedDept !== "" && categoryMap[selectedDept]) {
             categoriesToLoad = categoryMap[selectedDept];
         } else {
-            categoriesToLoad = Object.values(categoryMap).flat();
+            categoriesToLoad = [...new Set(Object.values(categoryMap).flat())];
         }
         
         categoriesToLoad.forEach(cat => {
@@ -389,4 +389,6 @@ if (filterDeptSelect && filterCatSelect) {
         
         filterCatSelect.value = ""; 
     });
+
+    filterDeptSelect.dispatchEvent(new Event('change'));
 }

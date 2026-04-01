@@ -73,9 +73,9 @@ foreach ($analytics as $item) {
 <body>
 <?php include ROOT . '/includes/admin_sidebar.php'; ?>
 
-<<div class="main-content">
+<div class="main-content">
     <div class="topbar">
-        <h2>Sales Analytics</h2>
+        <h2 class="mt-0">Sales Analytics</h2>
     </div>
 
     <div class="page-body">

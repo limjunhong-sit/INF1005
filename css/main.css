@@ -641,6 +641,16 @@ body.dark-theme .breadcrumb-item::before {
     --bs-breadcrumb-divider-color: rgba(255, 255, 255, 0.7);
 }
 
+.product-zoom {
+    transition: transform 0.5s ease;
+}
+.col:hover .product-zoom {
+    transform: scale(1.05); 
+}
+.col:hover h3 {
+    color: var(--accent) !important; 
+}
+
 @media (min-width: 992px) {
     .admin-view-text {
         font-family: 'Jost', sans-serif;

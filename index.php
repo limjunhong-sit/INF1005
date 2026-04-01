@@ -17,18 +17,6 @@ try {
     $trendingItems = []; // Safety fallback
 }
 ?>
-<style>
-    .product-zoom {
-    transition: transform 0.5s ease;
-    }
-    .col:hover .product-zoom {
-        transform: scale(1.05); 
-    }
-    .col:hover h5 {
-        color: var(--accent); 
-    }
-</style>
-
 <!DOCTYPE html>
 <html lang="en">
     <?php include ROOT . '/includes/head.php'; ?>
@@ -74,9 +62,9 @@ try {
                                     </div>
                                     
                                     <div class="mt-3">
-                                        <h5 style="font-family: 'Bebas Neue'; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 5px;">
+                                        <h3 style="font-family: 'Bebas Neue'; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 5px;">
                                             <?php echo strtoupper(htmlspecialchars($item['name'])); ?>
-                                        </h5>
+                                        </h3>
                                         <p style="font-family: 'Bebas Neue'; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 5px;">
                                             $<?php echo number_format($item['price'], 2); ?>
                                         </p>

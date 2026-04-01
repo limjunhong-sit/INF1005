@@ -63,13 +63,6 @@ try {
 <body> 
     <?php require_once ROOT . '/includes/admin_sidebar.php'; ?>
     <style>
-        .admin-main-content {
-            margin-left: 260px; 
-            padding: 40px;
-            background-color: var(--background);
-            min-height: 100vh;
-        }
-
         .accordion-button:not(.collapsed) {
             background-color: var(--warm-white);
             color: var(--charcoal);
@@ -96,23 +89,24 @@ try {
         body.dark-theme .accordion-button:not(.collapsed) {
             background-color: rgba(255,255,255,0.05);
         }
-
-        @media (max-width: 992px) {
-            .admin-main-content { margin-left: 0; padding: 20px; }
-        }
         
-        body.dark-theme .admin-main-content .text-muted {
+        body.dark-theme .main-content .text-muted {
             color: rgba(255, 255, 255, 0.6) !important;
+        }
+        body.dark-theme .list-group-item {
+            color: var(--cream); 
+        }
+        body.dark-theme .accordion-button::after {
+            filter: invert(1) brightness(200%);
         }
     </style>
 
-    <main class="admin-main-content">
-        <div class="container-fluid max-w-1200 mx-auto">
-            
-            <div class="d-flex justify-content-between align-items-center mb-5">
-                <h1 class="story-heading m-0" style="font-size: 2.5rem;">Order <span>Management</span></h1>
-            </div>
-
+   <div class="main-content">
+        <div class="topbar">
+            <h2 class="mt-0">Order Management</h2>
+        </div>
+        <div class="page-body">
+            <div class="container-fluid max-w-1200 mx-auto">
             <?php if (empty($orders)): ?>
                 <div class="text-center py-5 contact-card shadow-sm">
                     <p class="text-muted mb-0">No orders have been placed yet.</p>
@@ -181,7 +175,6 @@ try {
                                             </li>
                                         <?php endforeach; ?>
                                     </ul>
-
                                 </div>
                             </div>
                         </div>
@@ -189,7 +182,7 @@ try {
                 </div>
             <?php endif; ?>
         </div>
-    </main>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

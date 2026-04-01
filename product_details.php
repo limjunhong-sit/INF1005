@@ -16,7 +16,8 @@ $stmt->execute([$product_id]);
 $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$product) {
-    die("Product not found.");
+    header("Location: index.php");
+    exit;
 }
 
 // Fetch variants for this product
@@ -128,6 +129,8 @@ try {
 }
 ?>
 
+<!DOCTYPE html>
+<html lang="en">
 <?php include ROOT . '/includes/head.php'; ?>
 <body>
     <?php include ROOT . '/includes/header.php'; ?>
@@ -152,7 +155,7 @@ try {
                 </nav>
 
                 <h1 class="display-5 fw-bold"><?php echo htmlspecialchars($product['name']); ?></h1>
-                <h3 class="text-muted mb-4">$<?php echo number_format($product['price'], 2); ?></h3>
+                <h2 class="h3 text-muted mb-4">$<?php echo number_format($product['price'], 2); ?></h2>
 
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <?php
@@ -162,7 +165,7 @@ try {
                     ?>
                     <span class="small text-muted">Rating</span>
                     <span class="small fw-semibold"><?php echo htmlspecialchars(number_format($avg, 1)); ?></span>
-                    <span class="small rating-stars" aria-label="Average rating <?php echo number_format($avg, 1); ?> out of 5">
+                    <span class="small rating-stars" role="img" aria-label="Average rating <?php echo number_format($avg, 1); ?> out of 5">
                         <?php for ($i = 1; $i <= 5; $i++): ?>
                             <?php if ($i <= $rounded): ?>
                                 <span class="star star-filled">&#9733;</span>
