@@ -51,9 +51,9 @@ if ($dept && $cat) {
         <?php include ROOT . '/includes/header.php'; ?> 
         <main class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 1px;">
+                <h1 style="font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 1px;">
                     <?php echo htmlspecialchars($pageTitle); ?>
-                </h2>
+                </h1>
                 <form method="GET">
                     <?php if ($dept): ?><input type="hidden" name="dept" value="<?php echo htmlspecialchars($dept); ?>"><?php endif; ?>
                     <?php if ($cat): ?><input type="hidden" name="cat" value="<?php echo htmlspecialchars($cat); ?>"><?php endif; ?>
@@ -75,7 +75,7 @@ if ($dept && $cat) {
                                 </a>
                                 <div class="card-body text-center d-flex flex-column justify-content-between">
                                     <div>
-                                        <h3 class="card-title fs-6" style="font-family: 'Jost', sans-serif;"><?php echo htmlspecialchars($item['name']); ?></h3>
+                                        <p class="card-title fs-6" style="font-family: 'Jost', sans-serif;"><?php echo htmlspecialchars($item['name']); ?></p>
                                         <p class="card-text fw-bold mb-3">$<?php echo number_format($item['price'], 2); ?></p>
                                     </div>
                                     <a href="product_details.php?id=<?php echo $item['product_id']; ?>" class="btn btn-outline-dark w-100 rounded-0 mt-auto">View Details</a>
