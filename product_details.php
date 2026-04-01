@@ -199,10 +199,15 @@ try {
                         $variantMap[$key] = $v;
                     }
                     $defaultVariant = $variants[0];
+                    $maxVariantStock = 0;
+                    foreach ($variants as $v) {
+                        $maxVariantStock = max($maxVariantStock, (int)($v['stock_quantity'] ?? 0));
+                    }
                     ?>
                     <form action="/cart/add_to_cart.php" method="POST" id="addToCartForm">
                         <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>">
                         <input type="hidden" name="variant_id" id="variantIdInput" value="<?php echo $defaultVariant['variant_id']; ?>">
+                        <input type="hidden" name="colour" id="colourInput" value="<?php echo htmlspecialchars((string)($defaultVariant['colour'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
 
                         <?php if (count($sizes) > 1): ?>
                         <div class="mb-3">
@@ -215,18 +220,13 @@ try {
                         </div>
                         <?php endif; ?>
 
-                        <?php if (count($colours) > 1): ?>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Colour</label>
-                            <select name="colour" id="colourSelect" class="form-select" style="max-width: 150px;">
-                                <?php foreach ($colours as $c): ?>
-                                    <option value="<?php echo htmlspecialchars($c); ?>"><?php echo htmlspecialchars($c); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <?php endif; ?>
-
                         <?php include ROOT . '/includes/color.php'; ?>
+
+                        <div class="mb-3">
+                            <div class="small text-muted">
+                                Stock: <span id="selectedVariantStock" class="fw-semibold">—</span>
+                            </div>
+                        </div>
 
                         <?php if ($isAdmin): ?>
                         <button type="button" class="btn btn-secondary btn-lg px-5 w-100 w-md-auto" disabled>
@@ -244,12 +244,18 @@ try {
                         var variants = <?php echo json_encode($variants); ?>;
                         var variantMap = <?php echo json_encode($variantMap); ?>;
                         var sizeSelect = document.getElementById('sizeSelect');
-                        var colourSelect = document.getElementById('colourSelect');
+                        var colourInput = document.getElementById('colourInput');
                         var variantIdInput = document.getElementById('variantIdInput');
                         var addToCartBtn = document.getElementById('addToCartBtn');
+                        var selectedVariantStock = document.getElementById('selectedVariantStock');
 
                         function getSelectedSize() { return sizeSelect ? sizeSelect.value : (variants[0] && variants[0].size) ? variants[0].size : ''; }
-                        function getSelectedColour() { return colourSelect ? colourSelect.value : (variants[0] && variants[0].colour) ? variants[0].colour : ''; }
+                        function getSelectedColour() {
+                            if (colourInput && colourInput.value) return colourInput.value;
+                            var activeSwatch = document.querySelector('.swatches .swatch.active');
+                            if (activeSwatch && activeSwatch.dataset && activeSwatch.dataset.name) return activeSwatch.dataset.name;
+                            return (variants[0] && variants[0].colour) ? variants[0].colour : '';
+                        }
 
                         function updateVariantId() {
                             var key = getSelectedSize() + '|' + getSelectedColour();
@@ -257,17 +263,75 @@ try {
                             if (v) {
                                 variantIdInput.value = v.variant_id;
                                 if (addToCartBtn) addToCartBtn.disabled = parseInt(v.stock_quantity) <= 0;
+                                if (selectedVariantStock) selectedVariantStock.textContent = String(parseInt(v.stock_quantity) || 0);
                             } else {
                                 if (addToCartBtn) addToCartBtn.disabled = true;
+                                if (selectedVariantStock) selectedVariantStock.textContent = '—';
                             }
                         }
 
                         if (sizeSelect) sizeSelect.addEventListener('change', updateVariantId);
-                        if (colourSelect) colourSelect.addEventListener('change', updateVariantId);
+                        document.addEventListener('click', function(e) {
+                            var swatch = e.target && e.target.classList && e.target.classList.contains('swatch') ? e.target : null;
+                            if (!swatch) return;
+                            var name = swatch.dataset ? swatch.dataset.name : '';
+                            if (colourInput && name) colourInput.value = name;
+                            updateVariantId();
+                        });
                         updateVariantId();
                     })();
                     </script>
                     <?php endif; ?>
+                <?php endif; ?>
+
+                <?php if (!empty($variants)): ?>
+                    <details class="mt-4 variant-stock-details">
+                        <summary class="fw-semibold variant-stock-summary">View stock for all variants</summary>
+                        <div class="variant-stock-card mt-2">
+                            <div class="table-responsive">
+                            <table class="table table-sm align-middle variant-stock-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Size</th>
+                                        <th scope="col">Colour</th>
+                                        <th scope="col">Availability</th>
+                                        <th scope="col" class="text-end">Stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($variants as $v): ?>
+                                        <?php
+                                            $vSize = (string)($v['size'] ?? '');
+                                            $vColour = (string)($v['colour'] ?? '');
+                                            $vStock = (int)($v['stock_quantity'] ?? 0);
+                                            $ratio = $maxVariantStock > 0 ? max(0, min(1, $vStock / $maxVariantStock)) : 0;
+                                            $pct = (int)round($ratio * 100);
+                                            $status = 'In stock';
+                                            $statusClass = 'ok';
+                                            if ($vStock <= 0) { $status = 'Out of stock'; $statusClass = 'oos'; }
+                                            else if ($vStock <= 3) { $status = 'Low stock'; $statusClass = 'low'; }
+                                        ?>
+                                        <tr class="<?php echo $vStock > 0 ? '' : 'is-oos'; ?>">
+                                            <td><span class="variant-pill"><?php echo htmlspecialchars($vSize !== '' ? $vSize : '—'); ?></span></td>
+                                            <td><?php echo htmlspecialchars($vColour !== '' ? $vColour : '—'); ?></td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="variant-badge <?php echo htmlspecialchars($statusClass); ?>"><?php echo htmlspecialchars($status); ?></span>
+                                                    <div class="variant-stock-bar" aria-hidden="true">
+                                                        <div class="variant-stock-bar__fill <?php echo htmlspecialchars($statusClass); ?>" style="width: <?php echo $pct; ?>%"></div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                <span class="variant-stock-num"><?php echo $vStock; ?></span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </details>
                 <?php endif; ?>
             </div>
         </div>

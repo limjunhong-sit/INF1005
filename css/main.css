@@ -71,6 +71,150 @@ body {
     min-height: 100vh;
 }
 
+/* Product variant stock display */
+.variant-stock-details {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--cream);
+    overflow: hidden;
+}
+
+.variant-stock-summary {
+    cursor: pointer;
+    padding: 12px 14px;
+    user-select: none;
+    list-style: none;
+    position: relative;
+}
+
+.variant-stock-summary::-webkit-details-marker { display: none; }
+
+.variant-stock-summary::after {
+    content: '▾';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--mid);
+    transition: transform 0.18s ease;
+}
+
+details[open] > .variant-stock-summary::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.variant-stock-card {
+    border-top: 1px solid var(--border);
+    padding: 10px 12px 12px;
+    background: var(--cream);
+}
+
+.variant-stock-table,
+.variant-stock-table thead,
+.variant-stock-table tbody,
+.variant-stock-table tr,
+.variant-stock-table th,
+.variant-stock-table td {
+    background-color: transparent !important;
+}
+
+.variant-stock-table thead th {
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mid);
+    border-bottom: 1px solid var(--border);
+}
+
+.variant-stock-table tbody tr {
+    transition: background-color 0.14s ease, opacity 0.14s ease;
+}
+
+.variant-stock-table tbody tr:hover {
+    background: color-mix(in srgb, var(--warm-white) 22%, transparent 78%);
+}
+
+.variant-stock-table tbody tr.is-oos {
+    opacity: 0.65;
+}
+
+.variant-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--warm-white) 88%, var(--cream) 12%);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.variant-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    font-size: 0.82rem;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.variant-badge.ok { background: rgba(34, 197, 94, 0.12); border-color: rgba(34, 197, 94, 0.25); }
+.variant-badge.low { background: rgba(245, 158, 11, 0.14); border-color: rgba(245, 158, 11, 0.28); }
+.variant-badge.oos { background: rgba(148, 163, 184, 0.18); border-color: rgba(148, 163, 184, 0.30); }
+
+.variant-stock-bar {
+    width: 120px;
+    height: 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--cream) 80%, transparent 20%);
+    border: 1px solid color-mix(in srgb, var(--border) 70%, transparent 30%);
+    overflow: hidden;
+}
+
+.variant-stock-bar__fill {
+    height: 100%;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.7);
+}
+
+.variant-stock-bar__fill.low { background: rgba(245, 158, 11, 0.78); }
+.variant-stock-bar__fill.oos { background: rgba(148, 163, 184, 0.65); }
+
+.variant-stock-num {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Dark theme legibility tweaks for variant stock */
+body.dark-theme .variant-stock-details,
+body.dark-theme .variant-stock-card {
+    color: var(--charcoal);
+}
+
+body.dark-theme .variant-stock-summary {
+    color: var(--charcoal);
+}
+
+body.dark-theme .variant-stock-table thead th {
+    color: var(--mid);
+}
+
+body.dark-theme .variant-stock-table tbody td {
+    color: var(--charcoal);
+}
+
+body.dark-theme .variant-pill {
+    color: var(--charcoal);
+}
+
+body.dark-theme .variant-badge {
+    color: var(--charcoal);
+}
+
 header nav.navbar {
     background-color: var(--warm-white) !important;
     border-bottom: 1px solid var(--border);
