@@ -73,10 +73,13 @@ try {
             letter-spacing: 1px;
             padding: 5px 10px;
         }
-        .badge-paid { background-color: #28a745; color: white; }
-        .badge-pending { background-color: #ffc107; color: black; }
-        .badge-shipped { background-color: var(--accent); color: white; }
+        .badge-paid { background-color: #1a7a40; color: white; }    
+        .badge-pending { background-color: #b45300; color: white; }   
+        .badge-shipped { background-color: #6b5233; color: white; }   
         
+        .order-total { color: #6b5233; }
+        body.dark-theme .order-total { color: #e8c49a; }
+
         body.dark-theme .accordion-item {
             background-color: rgba(255,255,255,0.03);
             border-color: rgba(255,255,255,0.1);
@@ -102,6 +105,7 @@ try {
     </style>
 
    <div class="main-content">
+        <main>
         <div class="topbar">
             <h2 class="mt-0">Order Management</h2>
         </div>
@@ -131,7 +135,7 @@ try {
                                         &#128197; <?= date('M j, Y - g:i A', strtotime($order['created_at'])) ?>
                                     </span>
                                     
-                                    <span class="fw-bold ms-auto me-3" style="color: var(--accent);">
+                                    <span class="fw-bold ms-auto me-3 order-total">
                                         $<?= number_format($order['total_amount'], 2) ?>
                                     </span>
 
@@ -162,7 +166,7 @@ try {
                                     <ul class="list-group list-group-flush border-top border-secondary">
                                         <?php foreach ($order['items'] as $item): ?>
                                             <li class="list-group-item d-flex align-items-center bg-transparent px-0 py-3 border-secondary">
-                                                <img src="/<?= htmlspecialchars($item['image_url']) ?>" alt="Product" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; margin-right: 15px;">
+                                                <img src="/<?= htmlspecialchars($item['image_url']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; margin-right: 15px;">
                                                 <div class="flex-grow-1">
                                                     <span class="fw-bold d-block" style="font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 1px;">
                                                         <?= htmlspecialchars(strtoupper($item['name'])) ?>
@@ -182,6 +186,7 @@ try {
                 </div>
             <?php endif; ?>
         </div>
+        </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -174,7 +174,7 @@ try {
                             <?php endif; ?>
                         <?php endfor; ?>
                     </span>
-                    <a class="small text-decoration-none" href="#reviews">
+                    <a class="small text-decoration-none review-count-link" href="#reviews">
                         (<?php echo $count; ?>)
                     </a>
                 </div>
@@ -186,7 +186,7 @@ try {
                 </p>
 
                 <p class="text-muted small">
-                    Availability: <span class="text-success"><?php echo $totalStock; ?> in stock</span>
+                    Availability: <span class="stock-label"><?php echo $totalStock; ?> in stock</span>
                 </p>
 
                 <?php if (empty($variants)): ?>

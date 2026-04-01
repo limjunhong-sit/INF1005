@@ -10,7 +10,7 @@ require_once __DIR__ . '/includes/csrf.php';
         <?php include ROOT . '/includes/header.php'; ?>
         <main>
             <section class="container py-5">
-                <h2 class="text-center mb-4" style="font-family: 'Bebas Neue', serif;">Create Account</h2>
+                <h1 class="text-center mb-4" style="font-family: 'Bebas Neue', serif;">Create Account</h1>
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <form action="auth/process_register.php" method="POST" class="border rounded p-4 bg-light">

@@ -70,6 +70,7 @@ $currentThreshold = ($dbThreshold !== false) ? (int)$dbThreshold : 5;
 <?php include ROOT . '/includes/admin_sidebar.php'; ?>
 
 <div class="main-content">
+    <main>
     <div class="topbar">
         <h2>Settings</h2>
     </div>
@@ -94,7 +95,7 @@ $currentThreshold = ($dbThreshold !== false) ? (int)$dbThreshold : 5;
 
         <div class="card shadow-sm border-0 mt-3 settings-card">
             <div class="card-body p-4">
-                <h4 class="card-title fw-bold mb-4 settings-card-title">Inventory Rules</h4>
+                <h3 class="card-title fw-bold mb-4 settings-card-title">Inventory Rules</h3>
 
                 <form action="settings.php" method="POST">
                     <div class="mb-4">
@@ -127,6 +128,7 @@ $currentThreshold = ($dbThreshold !== false) ? (int)$dbThreshold : 5;
             </div>
         </div> 
     </div>
+    </main>
 </div>
 </body>
 </html>

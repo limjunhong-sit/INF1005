@@ -52,7 +52,7 @@ if (!$user) {
                     <h1 class="story-heading" style="font-size: 2.2rem; line-height: 1.2; margin-bottom: 8px;">
                         <?= htmlspecialchars(ucwords($user['first_name'] . ' ' . $user['last_name'])) ?>
                     </h1>
-                    <p class="contact-body text-uppercase" style="letter-spacing: 2px; font-size: 0.8rem; margin-top: 0;">
+                    <p class="contact-body text-uppercase" style="letter-spacing: 2px; font-size: 0.8rem; margin-top: 0; color: var(--charcoal);">
                         <?= htmlspecialchars($user['role'] === 'admin' ? 'Administrator' : 'Member') ?>
                     </p>
                 </div>
@@ -75,7 +75,7 @@ if (!$user) {
                     <?php if ($user['role'] !== 'admin'): ?>
                         <a href="/cart/purchase_history.php" class="btn btn-dark py-2">View Order History</a>
                     <?php endif; ?>
-                    <a href="/auth/logout.php" class="btn btn-outline-danger py-2">Sign Out</a>
+                    <a href="/auth/logout.php" class="btn btn-signout py-2" style="color: #a31621; border-color: #a31621;">Sign Out</a>
                 </div>
 
             </div>

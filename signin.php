@@ -11,7 +11,7 @@ $redirect = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect'], ENT_Q
         <?php include ROOT . '/includes/header.php'; ?>
         <main>
             <section class="container py-5">
-                <h2 class="text-center mb-4" style="font-family: 'Bebas Neue', serif;">Sign In</h2>
+                <h1 class="text-center mb-4" style="font-family: 'Bebas Neue', serif;">Sign In</h1>
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <?php if (isset($_GET['msg']) && $_GET['msg'] === 'signed_out'): ?>

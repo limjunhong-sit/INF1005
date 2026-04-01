@@ -30,10 +30,10 @@
     --accent: #8b6f47;
     --accent-dim: rgba(139, 111, 71, 0.1);
     --text: #2c2416;
-    --text-muted: #9a8e7e;
+    --text-muted: #6b5e4e;
     --danger: #c0392b;
     --danger-dim: rgba(192, 57, 43, 0.1);
-    --success: #27ae60;
+    --success: #1a7a40;
 }
 
 * {
@@ -118,7 +118,7 @@ body {
 
 .nav-link-item.active {
     background: var(--accent-dim);
-    color: var(--accent);
+    color: #6b5233;
 }
 
 .nav-link-item .icon {
@@ -400,13 +400,13 @@ td {
 
 .badge-men {
     background: rgba(79, 130, 219, 0.12);
-    color: #7aabff;
+    color: #1a4fa3;
     border: 1px solid rgba(79, 130, 219, 0.25);
 }
 
 .badge-women {
     background: rgba(219, 79, 150, 0.12);
-    color: #ff8ec5;
+    color: #a02060;
     border: 1px solid rgba(219, 79, 150, 0.25);
 }
 
@@ -416,7 +416,7 @@ td {
 }
 
 .stock-low {
-    color: #ffaa33;
+    color: #a05e00;
     font-weight: 500;
 }
 
@@ -726,8 +726,20 @@ body.dark-theme .badge-women {
     color: #ffb6d9;
     border-color: rgba(255, 142, 197, 0.3);
 }
+body.dark-theme .admin-info span {
+    color: #c4c4ce; 
+}
+body.dark-theme .btn-add {
+    background: #7a5c2e; 
+    color: #ffffff;    
+}
+body.dark-theme th {
+    color: #c4c4ce;
+}
+body.dark-theme .nav-link-item.active {
+    color: #e8c49a;
+}
 
-/* Variants section – use theme variables (blends with dark/light mode) */
 .image-file-input-hidden {
     position: absolute;
     left: -9999px;

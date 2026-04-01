@@ -86,6 +86,7 @@ try {
 <?php include ROOT . '/includes/admin_sidebar.php'; ?>
 
 <div class="main-content">
+    <main>
     <div class="topbar">
         <h2>Products</h2>
         <button class="btn-add" onclick="openAddModal()">+ Add Product</button>
@@ -120,14 +121,17 @@ try {
         </div>
 
         <div class="toolbar">
+            <label for="searchInput" class="visually-hidden">Search products</label>
             <input type="text" id="searchInput" class="search-input" placeholder="🔍  Search products...">
-            
+
+            <label for="deptFilter" class="visually-hidden">Filter by department</label>
             <select id="deptFilter" class="filter-select">
                 <option value="">All Departments</option>
                 <option value="Men">Men</option>
                 <option value="Women">Women</option>
             </select>
             
+            <label for="catFilter" class="visually-hidden">Filter by category</label>
             <select id="catFilter" class="filter-select">
                 <option value="">All Categories</option>
                 <option value="T-Shirts">T-Shirts</option>
@@ -159,7 +163,7 @@ try {
                                     if (strpos($img, 'http') !== 0 && strpos($img, '../') !== 0) {
                                         $img = '../' . $img; 
                                     }?>
-                                <img src="<?php echo htmlspecialchars($img); ?>" width="30" height="30" class="rounded me-2" style="object-fit: cover;">
+                                <img src="<?php echo htmlspecialchars($img); ?>" width="30" height="30" class="rounded me-2" style="object-fit: cover;" alt="">
                                 <span class="product-name"><?php echo htmlspecialchars($p['name']); ?></span>
                             </div>
                         </td>
@@ -194,8 +198,9 @@ try {
         </div>
     </div>
 </div>
+</main>
 
-<div class="modal-overlay" id="productModal">
+<div class="modal-overlay" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <div class="modal-box">
         <div class="modal-header">
             <h3 id="modalTitle">Add Product</h3>
@@ -207,13 +212,13 @@ try {
 
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Product Name</label>
+                    <label for="productName" class="visually-hidden">Product Name</label>
                     <input type="text" name="name" id="productName" placeholder="e.g. Charcoal Zip Hoodie" required>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Department</label>
+                        <label for="productDept" class="visually-hidden">Department</label>
                         <select name="dept" id="productDept" required>
                             <option value="">Select department</option>
                             <option value="Men">Men</option>
@@ -221,7 +226,7 @@ try {
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Category</label>
+                        <label for="productCategory" class="visually-hidden">Category</label>
                         <select name="category" id="productCategory" required disabled>
                             <option value="">Select department first</option>
                         </select>
@@ -230,11 +235,11 @@ try {
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Price ($)</label>
+                        <label for="productPrice" class="visually-hidden">Price ($)</label>
                         <input type="number" name="price" id="productPrice" placeholder="0.00" step="0.01" min="0" required>
                     </div>
                     <div class="form-group" id="productStockGroup">
-                        <label>Stock Quantity <span class="text-muted small">(used if no variants below)</span></label>
+                        <label for="productStock">Stock Quantity <span class="text-muted small">(used if no variants below)</span></label>
                         <input type="number" name="stock" id="productStock" placeholder="0" min="0" value="0" required>
                     </div>
                 </div>
@@ -247,7 +252,7 @@ try {
                         <label class="small fw-semibold mb-2 d-block">Add New Variant</label>
                         <div class="d-flex flex-wrap gap-2 align-items-end">
                             <div>
-                                <label class="variants-field-label small d-block">Size</label>
+                                <label for="newVariantSize" class="variants-field-label small d-block">Size</label>
                                 <select id="newVariantSize" class="form-select form-select-sm" style="width: 120px;">
                                     <option value="">— Select —</option>
                                     <option value="XS">XS</option>
@@ -262,7 +267,7 @@ try {
                                 <input type="text" id="newVariantSizeCustom" class="form-control form-control-sm mt-1" placeholder="Custom size" style="width: 120px; display: none;">
                             </div>
                             <div>
-                                <label class="variants-field-label small d-block">Colour</label>
+                                <label for="newVariantColour" class="variants-field-label small d-block">Colour</label>
                                 <select id="newVariantColour" class="form-select form-select-sm" style="width: 120px;">
                                     <option value="">— Select —</option>
                                     <option value="Black">Black</option>
@@ -283,7 +288,7 @@ try {
                                 <input type="text" id="newVariantColourCustom" class="form-control form-control-sm mt-1" placeholder="Custom colour" style="width: 120px; display: none;">
                             </div>
                             <div>
-                                <label class="variants-field-label small d-block">Stock</label>
+                                <label class="variants-field-label small d-block" for="newVariantStock" >Stock</label>
                                 <input type="number" id="newVariantStock" class="form-control form-control-sm" min="0" value="0" style="width: 80px;">
                             </div>
                             <button type="button" class="btn btn-sm btn-dark" id="addVariantBtn">Add Variant</button>
@@ -299,10 +304,10 @@ try {
                 </div>
                 
                 <div class="form-group position-relative" id="imageFormGroup">
-                    <label>Image</label>
-                    <input type="file" name="image" id="productImage" accept="image/*" class="image-file-input-hidden">
+                    <label for="productImage" class="visually-hidden">Image</label>
+                    <input type="file" name="image" id="productImage" accept="image/*" class="image-file-input-hidden" aria-hidden="true" tabindex="-1">
                     <div id="imageAddState">
-                        <button type="button" class="btn btn-sm btn-outline-dark" id="addImageBtn">Choose file</button>
+                        <button type="button" class="btn btn-sm btn-outline-dark" id="addImageBtn" aria-label="Choose image file">Choose file</button>
                         <span class="small text-muted ms-2" id="addFileName">No file chosen</span>
                     </div>
                     <div id="imageEditState" style="display: none;">
@@ -311,14 +316,14 @@ try {
                             <img id="productImagePreview" src="" alt="Current product" class="img-fluid rounded image-preview-thumb image-preview-clickable" role="button" tabindex="0">
                         </div>
                         <div class="image-replace-wrap">
-                            <label class="small fw-semibold d-block mb-1">Replace image</label>
-                            <button type="button" class="btn btn-sm btn-outline-dark" id="replaceImageBtn">Choose file</button>
+                            <label for="productImage" class="small fw-semibold d-block mb-1">Replace image</label>
+                            <button type="button" class="btn btn-sm btn-outline-dark" id="replaceImageBtn" aria-label="Replace image file">Choose file</button>
                             <span class="small text-muted ms-2" id="replaceFileName">No file chosen</span>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
+                    <label for="productDesc" class="visually-hidden">Description</label>
                     <textarea name="desc" id="productDesc" placeholder="Short product description..." required></textarea>
                 </div>
             </div>
@@ -335,10 +340,10 @@ try {
     <img id="imageExpandImg" src="" alt="Expanded product image">
 </div>
 
-<div class="modal-overlay" id="deleteModal">
+<div class="modal-overlay" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
     <div class="delete-modal-box">
         <div class="delete-icon">🗑️</div>
-        <h3>Delete Product</h3>
+        <h3 id="deleteModalTitle">Delete Product</h3>
         <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?<br>This action cannot be undone.</p>
         
         <form action="process.php" method="POST">

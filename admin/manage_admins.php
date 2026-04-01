@@ -79,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/admin.css">
     <style>
-        /* Same Inventory Rules style as Settings page */
         body.dark-theme .settings-card {
             background-color: rgba(255, 255, 255, 0.03) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -123,8 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include ROOT . '/includes/admin_sidebar.php'; ?>
 
 <div class="main-content">
+    <main>
     <div class="topbar">
-        <h2>Manage Admins</h2>
+        <h1 class="h2">Manage Admins</h1>
     </div>
 
     <div class="page-body">
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="card shadow-sm border-0 mt-3 settings-card admin-form-card">
             <div class="card-body p-4">
-                <h4 class="card-title fw-bold mb-4 settings-card-title">Create Admin</h4>
+                <h2 class="card-title fw-bold mb-4 settings-card-title">Create Admin</h2>
                 <p class="admin-form-desc small mb-4">
                     Use this form to create a new admin account. The email must not already be registered.
                 </p>
@@ -225,8 +225,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </div>
+    </main>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

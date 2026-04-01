@@ -1,18 +1,10 @@
 :root {
-    /*--cream: #f8f4ef;
-    --warm-white: #f5f0e8;
-    --charcoal: #1e1e1e;
-    --mid: #5a5a5a;
-    --accent: #b5895a;
-    --accent-light: #e8d5bf;
-    --border: #ddd5c8;*/
-
     --warm-white: #f2efe9; 
     --cream: #e6e2d8;      
     --charcoal: #2c2c2c;   
     --mid: #6b6b6b;        
     --muted: var(--mid);
-    --accent: #9b744a;     
+    --accent: #7a5a32;     
     --accent-light: #d1c5b8; 
     --border: #d0c9c0;
     --light-bg: #fafaf9;
@@ -783,6 +775,24 @@ body.dark-theme .breadcrumb-item.active {
 body.dark-theme .breadcrumb-item::before {
     color: rgba(255, 255, 255, 0.7) !important;
     --bs-breadcrumb-divider-color: rgba(255, 255, 255, 0.7);
+}
+.review-count-link {
+    color: #0a58ca;
+}
+body.dark-theme .review-count-link {
+    color: #6ea8fe;
+}
+body.dark-theme .btn-signout {
+    color: #ff6b6b !important;
+    border-color: #ff6b6b !important;
+}
+
+/* Stock label - WCAG AA compliant for both themes */
+.stock-label {
+    color: #146c43;
+}
+body.dark-theme .stock-label {
+    color: #75c798;
 }
 
 .product-zoom {

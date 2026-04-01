@@ -74,6 +74,7 @@ foreach ($analytics as $item) {
 <?php include ROOT . '/includes/admin_sidebar.php'; ?>
 
 <div class="main-content">
+    <main>
     <div class="topbar">
         <h2 class="mt-0">Sales Analytics</h2>
     </div>
@@ -131,7 +132,7 @@ foreach ($analytics as $item) {
                                                 $img = '../' . $img; 
                                             }
                                         ?>
-                                        <img src="<?php echo htmlspecialchars($img); ?>" width="40" height="40" class="rounded me-3" style="object-fit: cover;">
+                                        <img src="<?php echo htmlspecialchars($img); ?>" width="40" height="40" class="rounded me-3" style="object-fit: cover;" alt="">
                                         <span class="product-name fw-bold"><?php echo htmlspecialchars($item['name']); ?></span>
                                     </div>
                                 </td>
@@ -158,6 +159,7 @@ foreach ($analytics as $item) {
             </table>
         </div>
     </div>
+    </main>
 </div>
 </body>
 </html>
