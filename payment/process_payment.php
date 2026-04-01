@@ -74,6 +74,59 @@ try {
     }
     $dbAmountCents = intval($dbTotal * 100);
 
+    // Build a stable hash of the current cart (prevents duplicate orders on retry/double-click)
+    $cartHashParts = [];
+    foreach ($cartItems as $item) {
+        $cartHashParts[] = [
+            'product_id' => (int)$item['product_id'],
+            'variant_id' => (int)$item['variant_id'],
+            'quantity' => (int)$item['quantity'],
+            'price' => (float)$item['price'],
+        ];
+    }
+    usort($cartHashParts, function ($a, $b) {
+        return [$a['product_id'], $a['variant_id']] <=> [$b['product_id'], $b['variant_id']];
+    });
+    $cartHash = hash('sha256', json_encode($cartHashParts));
+
+    // If we already created an order for this cart in this session, reuse it
+    $existingOrderId = (int)($_SESSION['pending_order_id'] ?? 0);
+    $existingCartHash = (string)($_SESSION['pending_cart_hash'] ?? '');
+    if ($existingOrderId > 0 && hash_equals($existingCartHash, $cartHash)) {
+        $stmt = $pdo->prepare("
+            SELECT p.stripe_payment_id
+            FROM orders o
+            JOIN payments p ON o.order_id = p.order_id
+            WHERE o.order_id = ? AND o.user_id = ? AND o.status = 'pending' AND p.status = 'pending'
+            ORDER BY p.created_at DESC
+            LIMIT 1
+        ");
+        $stmt->execute([$existingOrderId, $userId]);
+        $existingPayment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($existingPayment && !empty($existingPayment['stripe_payment_id'])) {
+            // Keep shipping address up to date for the already-created order
+            $stmt = $pdo->prepare("
+                UPDATE orders
+                SET shipping_address = ?, total_amount = ?
+                WHERE order_id = ? AND user_id = ? AND status = 'pending'
+            ");
+            $stmt->execute([$shippingAddress, $dbTotal, $existingOrderId, $userId]);
+
+            $intent = \Stripe\PaymentIntent::retrieve($existingPayment['stripe_payment_id']);
+            if (!empty($intent->client_secret)) {
+                echo json_encode([
+                    'clientSecret' => $intent->client_secret,
+                    'orderId' => $existingOrderId
+                ]);
+                exit;
+            }
+        }
+
+        // If something is inconsistent (missing pending payment), drop session linkage and proceed to create a new one
+        unset($_SESSION['pending_order_id'], $_SESSION['pending_cart_hash']);
+    }
+
     // Create Stripe PaymentIntent
     $paymentIntent = \Stripe\PaymentIntent::create([
         'amount' => $dbAmountCents,
@@ -103,6 +156,9 @@ try {
     $stmt->execute([$orderId, $userId, $paymentIntent->id, $dbTotal]);
 
     $pdo->commit();
+
+    $_SESSION['pending_order_id'] = $orderId;
+    $_SESSION['pending_cart_hash'] = $cartHash;
 
     echo json_encode([
         'clientSecret' => $paymentIntent->client_secret,

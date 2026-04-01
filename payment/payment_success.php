@@ -150,6 +150,9 @@ if (!empty($paymentId)) {
         }
 
         $pdo->commit();
+
+        // Payment completed; allow future checkouts to create a new pending order
+        unset($_SESSION['pending_order_id'], $_SESSION['pending_cart_hash']);
     } catch (\Exception $e) {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
