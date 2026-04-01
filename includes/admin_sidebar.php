@@ -26,6 +26,9 @@ $adminInitial = mb_strtoupper(mb_substr($adminName, 0, 1));
         <a href="settings.php" class="nav-link-item <?php echo ($currentPage === 'settings.php') ? 'active' : ''; ?>">
             <span class="icon">⚙️</span> Settings
         </a>
+        <a href="manage_admins.php" class="nav-link-item <?php echo ($currentPage === 'manage_admins.php') ? 'active' : ''; ?>">
+            <span class="icon">🛡️</span> Manage Admins
+        </a>
         <a href="#" id="adminThemeToggle" class="nav-link-item" style="margin-top: 15px;">
             <span class="icon">🌓</span> Dark Mode
         </a>
