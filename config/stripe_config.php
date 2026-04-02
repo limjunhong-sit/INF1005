@@ -1,14 +1,9 @@
 <?php
-session_set_cookie_params(0);
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 /**
- * Load environment variables from project-root .env.
+ * Load Stripe keys from project-root .env.
  */
-function loadDbEnvFromProjectRoot(): void
+function loadStripeEnvFromProjectRoot(): void
 {
     static $loaded = false;
     if ($loaded) {
@@ -61,26 +56,12 @@ function loadDbEnvFromProjectRoot(): void
     $loaded = true;
 }
 
-loadDbEnvFromProjectRoot();
+loadStripeEnvFromProjectRoot();
 
-$host = getenv('DB_HOST') ?: '';
-$dbname = getenv('DB_NAME') ?: '';
-$username = getenv('DB_USER') ?: '';
-$password = getenv('DB_PASS') ?: '';
-
-if ($host === '' || $dbname === '' || $username === '' || $password === '') {
-    die('Database configuration missing. Check .env DB_HOST, DB_NAME, DB_USER, DB_PASS.');
+if (!defined('STRIPE_SECRET_KEY')) {
+    define('STRIPE_SECRET_KEY', getenv('STRIPE_SECRET_KEY') ?: '');
 }
 
-// 2. Establish the Connection
-try {
-    $options = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_TIMEOUT => 3 // Keeps the 3-second fail-safe just in case
-    ];
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, $options);
-    
-} catch (PDOException $e) {
-    die("Local Database Connection Failed: " . $e->getMessage());
+if (!defined('STRIPE_PUBLISHABLE_KEY')) {
+    define('STRIPE_PUBLISHABLE_KEY', getenv('STRIPE_PUBLISHABLE_KEY') ?: '');
 }
-?>

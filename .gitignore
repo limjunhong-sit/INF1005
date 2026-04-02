@@ -3,5 +3,3 @@
 .env.*
 !.env.example
 
-# Composer dependencies
-vendor/
