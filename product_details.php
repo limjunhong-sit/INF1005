@@ -474,7 +474,7 @@ try {
                                         <div class="fw-semibold"><?php echo htmlspecialchars($name); ?></div>
                                         <div class="small text-muted"><?php echo htmlspecialchars($created); ?></div>
                                     </div>
-                                    <div class="small rating-stars" aria-label="Rating <?php echo $rRating; ?> out of 5">
+                                    <span class="small rating-stars" role="img" aria-label="Rating <?php echo $rRating; ?> out of 5">
                                         <?php for ($i = 1; $i <= 5; $i++): ?>
                                             <?php if ($i <= $rRating): ?>
                                                 <span class="star star-filled">&#9733;</span>
@@ -482,7 +482,7 @@ try {
                                                 <span class="star star-empty">&#9733;</span>
                                             <?php endif; ?>
                                         <?php endfor; ?>
-                                    </div>
+                                    </span>
                                 </div>
                                 <div class="mt-2">
                                     <?php echo nl2br(htmlspecialchars((string)$r['body'])); ?>
