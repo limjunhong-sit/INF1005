@@ -483,7 +483,7 @@ try {
                                             <?php endif; ?>
                                         <?php endfor; ?>
                                     </span>
-                                </div>
+                                    </div>
                                 <div class="mt-2">
                                     <?php echo nl2br(htmlspecialchars((string)$r['body'])); ?>
                                 </div>
