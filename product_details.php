@@ -20,6 +20,17 @@ if (!$product) {
     exit;
 }
 
+// Optional per-product image credits (no database changes required).
+$imageCredits = require ROOT . '/config/image_credits.php';
+$productNameKey = (string)($product['name'] ?? '');
+$productCredit = $imageCredits[$product_id]
+    ?? ($productNameKey !== '' ? ($imageCredits[$productNameKey] ?? null) : null);
+$hasProductCredit = is_array($productCredit)
+    && !empty($productCredit['author'])
+    && !empty($productCredit['author_url'])
+    && !empty($productCredit['website'])
+    && !empty($productCredit['website_url']);
+
 // Fetch variants for this product
 $stmt = $pdo->prepare("SELECT * FROM product_variants WHERE product_id = ? ORDER BY size, colour");
 $stmt->execute([$product_id]);
@@ -144,6 +155,18 @@ try {
                          alt="<?php echo htmlspecialchars($product['name']); ?>">
                     <div class="colour-overlay" id="productOverlay"></div>
                 </div>
+                <?php if ($hasProductCredit): ?>
+                    <p class="mt-2 mb-0 text-muted" style="font-size: 0.78rem; letter-spacing: 0.01em;">
+                        Image by
+                        <a href="<?php echo htmlspecialchars((string)$productCredit['author_url']); ?>" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                            <?php echo htmlspecialchars((string)$productCredit['author']); ?>
+                        </a>
+                        via
+                        <a href="<?php echo htmlspecialchars((string)$productCredit['website_url']); ?>" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                            <?php echo htmlspecialchars((string)$productCredit['website']); ?>
+                        </a>
+                    </p>
+                <?php endif; ?>
             </div> 
 
             <div class="col-md-6">
